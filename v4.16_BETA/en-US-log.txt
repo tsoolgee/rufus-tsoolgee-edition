@@ -56,12 +56,6 @@ DBX update timestamp is 1788300339
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_ia64.efiauth2&page=1&per_page=1 for DBX update timestamp
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_riscv64.efiauth2&page=1&per_page=1 for DBX update timestamp
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_loongarch64.efiauth2&page=1&per_page=1 for DBX update timestamp
-Checking for Rufus updates...
-Using https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest/download/ for the update check
-Checking release channel...
-Base update check: tsoolgee/rufus-tsoolgee-edition/releases/latest/download/Rufus_win_x64_11.0.ver
-Could not find a release version file on server https://github.com
-Updates: Unable to access version data
 2 devices found
 Disk type: FIXED, Disk size: 150 GB, Sector size: 512 bytes
 Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
@@ -89,23 +83,29 @@ Partition 3:
   ID: {51199064-2A58-498E-81E0-1BDFD593ECED}
   Size: 149.9 GB (160939621888 bytes)
   Start Sector: 237568, Attributes: 0x0000000000000000
+Checking for Rufus updates...
+Using https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest/download/ for the update check
+Checking release channel...
+Base update check: tsoolgee/rufus-tsoolgee-edition/releases/latest/download/Rufus_win_x64_11.0.ver
+Could not find a release version file on server https://github.com
+Updates: Unable to access version data
 WARNING: The following application(s) or service(s) are accessing the drive:
-● [2984] C:\Windows\system32\rundll32.exe C:\Windows\system32\AppXDeploymentExtensions.OneCore.dll,ShellRefresh (rx)
-● [968] C:\Windows\system32\lsass.exe (rwx)
-● [788] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
-● [508] "fontdrvhost.exe" (x)
+● [9904] C:\Windows\system32\rundll32.exe C:\Windows\system32\AppXDeploymentExtensions.OneCore.dll,ShellRefresh (rx)
+● [964] C:\Windows\system32\lsass.exe (rwx)
+● [712] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
+● [1020] "fontdrvhost.exe" (x)
 ● [1064] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
-● [1116] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
+● [1120] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
+● [1280] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
+● [1296] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s PrintDeviceConfigurationService (rx)
 ● [1288] C:\Windows\System32\svchost.exe -k netsvcs -p -s NetSetupSvc (rx)
-● [1280] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s DeviceInstall (x)
-● [1304] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
-● [1328] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
-● [1460] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
-● [1512] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
-● [1560] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
-● [1572] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
-● [1584] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
-● [1636] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
+● [1304] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s DeviceInstall (x)
+● [1312] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
+● [1468] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
+● [1508] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
+● [1572] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
+● [1604] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
+● [1616] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
 You should close these applications before retrying the operation.
-TSOOLGEE: target is the SYSTEM disk an internal drive - asking for extra confirmation
+tsoolgee: target is the SYSTEM disk an internal drive - asking for extra confirmation
 

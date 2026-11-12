@@ -8,7 +8,7 @@ SetLGP: Successfully set NoDriveTypeAutorun policy to 0x0000009E
 Localization set to 'en-US'
 Found VHD device 'Microsoft Virtual Disk'
 Notice: Volume Device Path is \Device\HarddiskVolume4
-Waiting for access on \\?\Volume{b25ba573-0000-0000-0000-100000000000}...
+Waiting for access on \\?\Volume{61030377-0000-0000-0000-100000000000}...
 WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
 Process search thread is not started!
 Removing D: from the list: This is the disk from which Rufus is running!
@@ -25,7 +25,7 @@ Found 1 revoked Secure Boot certificate entries from remote
 CAUTION: Listing of internal (non-USB) drives enabled
 Found VHD device 'Microsoft Virtual Disk'
 Notice: Volume Device Path is \Device\HarddiskVolume4
-Waiting for access on \\?\Volume{b25ba573-0000-0000-0000-100000000000}...
+Waiting for access on \\?\Volume{61030377-0000-0000-0000-100000000000}...
 WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
 Process search thread is not started!
 WARNING: Listing the disk from which Rufus is running, because internal drives are enabled!
@@ -39,7 +39,7 @@ WARNING: Listing the system disk, because internal drives are enabled!
 Disk type: FIXED, Disk size: 150 GB, Sector size: 512 bytes
 Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
 Partition type: MBR, NB Partitions: 1
-Disk ID: 0xB25BA573
+Disk ID: 0x61030377
 Drive has a Windows 7 Master Boot Record
 Partition 1:
   Type: NTFS (0x07)
@@ -48,14 +48,12 @@ Partition 1:
   Start Sector: 2048, Boot: No
 Checking for UEFI DBX updates...
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FDBX%2Fx86%2FDBXUpdate.bin&page=1&per_page=1 for DBX update timestamp
-Unable to retrieve file length: [0x00002F76] The requested header was not found
-Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FDBX%2Famd64%2FDBXUpdate.bin&page=1&per_page=1 for DBX update timestamp
 DBX update timestamp is 1788934591
 2 devices found
 Disk type: FIXED, Disk size: 150 GB, Sector size: 512 bytes
 Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
 Partition type: MBR, NB Partitions: 1
-Disk ID: 0xB25BA573
+Disk ID: 0x61030377
 Drive has a Windows 7 Master Boot Record
 Partition 1:
   Type: NTFS (0x07)
@@ -90,24 +88,24 @@ Partition 3:
   Size: 149.9 GB (160939621888 bytes)
   Start Sector: 237568, Attributes: 0x0000000000000000
 WARNING: The following application(s) or service(s) are accessing the drive:
-● [2380] "C:\Windows\uus\AMD64\MoUsoCoreWorker.exe" useprivatenamespaces (rx)
+● [9212] "C:\Windows\uus\AMD64\MoUsoCoreWorker.exe" useprivatenamespaces (rx)
 ● [996] C:\Windows\system32\lsass.exe (rwx)
-● [680] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
+● [496] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
 ● [1020] "fontdrvhost.exe" (x)
-● [1100] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
-● [1156] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
-● [1324] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
-● [1348] C:\Windows\System32\svchost.exe -k netsvcs -p -s NetSetupSvc (rx)
-● [1356] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
-● [1488] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
-● [1516] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
-● [1600] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
-● [1608] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
-● [1616] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
-● [1628] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
-● [1676] C:\Windows\system32\svchost.exe -k LocalServiceNetworkRestricted -p -s vmictimesync (rx)
+● [1092] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
+● [1140] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
+● [1308] C:\Windows\System32\svchost.exe -k netsvcs -p -s NetSetupSvc (rx)
+● [1328] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
+● [1336] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
+● [1480] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
+● [1528] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
+● [1588] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
+● [1584] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
+● [1600] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
+● [1640] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
+● [1680] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -s WPDBusEnum (rwx)
 You should close these applications before retrying the operation.
-TSOOLGEE: target is the SYSTEM disk an internal drive - asking for extra confirmation
+tsoolgee: target is the SYSTEM disk an internal drive - asking for extra confirmation
 Checking for Rufus updates...
 Using https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest/download/ for the update check
 Checking release channel...
