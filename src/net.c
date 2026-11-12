@@ -35,6 +35,7 @@
 #include <virtdisk.h>
 
 #include "rufus.h"
+#include "tsoolgee.h"
 #include "missing.h"
 #include "resource.h"
 #include "msapi_utf8.h"
@@ -523,7 +524,7 @@ static DWORD WINAPI CheckForUpdatesThread(LPVOID param)
 {
 	BOOL releases_only = TRUE, found_new_version = FALSE;
 	int status = 0;
-	const char* server_url = RUFUS_URL "/";
+	const char* server_url = TS_UPDATE_SERVER;	// TSOOLGEE: updates come from the fork
 	int i, j, k, max_channel, verbose = 0, verpos[4];
 	static const char* channel[] = { "release", "beta", "test" };		// release channel
 	const char* accept_types[] = { "*/*\0", NULL };
@@ -604,7 +605,7 @@ static DWORD WINAPI CheckForUpdatesThread(LPVOID param)
 #else
 	max_channel = releases_only ? 1 : (int)ARRAYSIZE(channel) - 1;
 #endif
-	vuprintf("Using %s for the update check", RUFUS_URL);
+	vuprintf("Using %s/%s for the update check", TS_UPDATE_SERVER, TS_UPDATE_PATH);
 	for (k = 0; (k < max_channel) && (!found_new_version); k++) {
 		// Get the arch name and convert it lowercase
 		char* archname = strdup(GetArchName(WindowsVersion.Arch));
@@ -619,7 +620,7 @@ static DWORD WINAPI CheckForUpdatesThread(LPVOID param)
 		// look for rufus_win_x64_6.2.ver (Win8 x64) but only get a match for rufus_win_x64_6.ver (Vista x64 or later)
 		// This allows sunsetting OS versions (eg XP) or providing different downloads for different archs/groups.
 		// Note that for BETAs, we only catter for x64 regardless of the OS arch.
-		static_sprintf(urlpath, "%s%s%s_win_%s_%lu.%lu.ver", APPLICATION_NAME, (k == 0) ? "": "_",
+		static_sprintf(urlpath, "%s%s%s%s_win_%s_%lu.%lu.ver", TS_UPDATE_PATH, APPLICATION_NAME, (k == 0) ? "": "_",
 			(k == 0) ? "" : channel[k], archname, WindowsVersion.Major, WindowsVersion.Minor);
 		safe_free(archname);
 		vuprintf("Base update check: %s", urlpath);
