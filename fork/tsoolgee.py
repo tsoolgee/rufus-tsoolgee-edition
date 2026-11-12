@@ -113,7 +113,9 @@ def make_ver(tag, outdir):
     he = (f'Rufus TSOOLGEE {short} - \u05de\u05d1\u05d5\u05e1\u05e1 \u05e2\u05dc Rufus {short} \u05d4\u05de\u05e7\u05d5\u05e8\u05d9, '
           '\u05e2\u05dd \u05d0\u05e4\u05e9\u05e8\u05d5\u05ea \u05dc\u05d4\u05e6\u05d9\u05d2 \u05db\u05d5\u05e0\u05e0\u05d9\u05dd \u05e4\u05e0\u05d9\u05de\u05d9\u05d9\u05dd '
           '\u05d5\u05d0\u05d6\u05d4\u05e8\u05d5\u05ea \u05e0\u05d5\u05e1\u05e4\u05d5\u05ea \u05dc\u05e4\u05e0\u05d9 \u05d3\u05d9\u05e1\u05e7 \u05d4\u05de\u05e2\u05e8\u05db\u05ea.')
-    en = f'Rufus TSOOLGEE {short} - based on the original Rufus {short}, with optional listing of internal drives and extra warnings for the system disk.'
+    en = f'Rufus TSOOLGEE {short} - an edited version (not the original Rufus) based on Rufus {short}, with optional listing of internal drives and extra warnings for the system disk.'
+    he += ' נערך על ידי צול גאה (tsoolgee.uk).'
+    en += ' Edited by tsoolgee (tsoolgee.uk).'
     notes = (r'{\rtf1\fbidis\ansi\ansicpg1252\deff0\deflang1024{\fonttbl{\f0\fnil\fcharset0 Arial Unicode MS;}}'
              '\n\\pard\\ltrpar\\sl276\\slmult1\\par\\b\\f0\\fs22 ' + rtf_escape(f'Rufus TSOOLGEE {short}') + '\\b0\\par\\par\n'
              '\\pard\\rtlpar\\fs18 ' + rtf_escape(he) + '\\par\\par\n'
