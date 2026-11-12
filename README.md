@@ -1,14 +1,14 @@
 <div dir="rtl">
 
-# Rufus – מהדורת TSOOLGEE
+# Rufus – מהדורת TSOOLGEE (גרסה ערוכה, לא המקורית)
 
-[![הורדה](https://img.shields.io/github/v/release/tsoolgee/rufus?label=%D7%94%D7%95%D7%A8%D7%93%D7%94&style=flat-square)](https://github.com/tsoolgee/rufus/releases/latest)
+[![הורדה](https://img.shields.io/github/v/release/tsoolgee/rufus-tsoolgee-edition?label=%D7%94%D7%95%D7%A8%D7%93%D7%94&style=flat-square)](https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest)
 [![רישיון](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](LICENSE.txt)
 
-זהו פורק של [**Rufus**](https://github.com/pbatard/rufus) – הכלי של Pete Batard ליצירת דיסק און קי לאתחול.
-הפורק זהה למקור בכל דבר, ומוסיף לו **אפשרות לצרוב גם לכוננים הפנימיים של המחשב**, יחד עם **אזהרות נוספות** שנועדו למנוע מחיקה של הכונן הלא נכון.
+זוהי **גרסה ערוכה** של [**Rufus**](https://github.com/pbatard/rufus) – הכלי של Pete Batard ליצירת דיסק און קי לאתחול – ש[**צול גאה**](https://tsoolgee.uk) ערך.
+**זו אינה הגרסה המקורית של Rufus.** היא זהה למקור בכל דבר, ומוסיפה לו **אפשרות לצרוב גם לכוננים הפנימיים של המחשב**, יחד עם **אזהרות נוספות** שנועדו למנוע מחיקה של הכונן הלא נכון.
 
-**[⬇ להורדת הגרסה האחרונה](https://github.com/tsoolgee/rufus/releases/latest)**
+**[⬇ להורדת הגרסה האחרונה](https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest)**
 
 ---
 
@@ -39,6 +39,7 @@
 | בדיקת עדכונים בתוך התוכנה | מול rufus.ie | מול **הפורק הזה** (גרסאות TSOOLGEE חתומות) |
 | מספרי גרסה | 4.15, 4.16_BETA2… | **אותם מספרים בדיוק** |
 | חתימה דיגיטלית (Authenticode) | חתום על ידי Akeo | לא חתום (ראו בהמשך) |
+| זיהוי בתוך התוכנה | – | הכותרת "TSOOLGEE edition", כפתור **"נערך ע״י צול גאה"** וקרדיט בחלון "אודות" |
 
 כל שאר ההתנהגות (פורמט, צריבת ISO, Windows To Go, בדיקת בלוקים פגומים וכו') זהה לחלוטין למקור.
 
@@ -70,7 +71,7 @@
 
 * **מעקב אחרי המקור:** כל 6 שעות [תהליך אוטומטי](.github/workflows/tsoolgee-release.yml) בודק אם יצאה גרסה חדשה של Rufus המקורי, כולל גרסאות בטא. אם יצאה, השינויים של המהדורה מוחלים עליה מחדש, היא נבנית ונבדקת אוטומטית (כולל צילומי מסך של הממשק בעברית ובאנגלית), ומתפרסם Release **עם אותו מספר גרסה בדיוק**.
 * **אם השינויים כבר לא מתאימים לקוד החדש** (התנגשות), לא מתפרסם כלום, ונפתח Issue בריפו.
-* **בתוך התוכנה:** "בדיקת עדכונים" של Rufus מצביעה במהדורה הזו על הריפו הזה ([ענף `update-info`](https://github.com/tsoolgee/rufus/tree/update-info)) ולא על rufus.ie. לכן העדכון מוריד את גרסת TSOOLGEE החדשה ולא את המקורית.
+* **בתוך התוכנה:** "בדיקת עדכונים" של Rufus מצביעה במהדורה הזו על הריפו הזה ([ענף `update-info`](https://github.com/tsoolgee/rufus-tsoolgee-edition/tree/update-info)) ולא על rufus.ie. לכן העדכון מוריד את גרסת TSOOLGEE החדשה ולא את המקורית.
 * קובצי העדכון והקבצים להורדה חתומים במפתח RSA נפרד של המהדורה, והתוכנה בודקת את החתימה לפני שהיא מציעה עדכון או מורידה אותו. קבצים שהתוכנה מורידה מהשרת של Rufus (GRUB, Syslinux, רשימות DBX, סקריפט ההורדה Fido) ממשיכים להתקבל עם החתימה המקורית של Rufus. כל קובץ חייב להיות חתום באחד משני המפתחות.
 
 ## למה מופיעות אזהרות כשמפעילים
@@ -81,10 +82,17 @@
 
 אפשר לבנות את התוכנה בעצמכם מקוד המקור שבריפו (Visual Studio, `rufus.sln`), בדיוק כמו את המקור.
 
+## איך מזהים שזו המהדורה הערוכה
+
+* **כותרת החלון:** ‏`Rufus 4.x.xxxx - TSOOLGEE edition`.
+* **כפתור "נערך ע״י צול גאה ↗"** בשורת הכותרת "מאפייני כונן", בצד השני מהכותרת. לחיצה עליו פותחת את [tsoolgee.uk](https://tsoolgee.uk).
+* **בחלון "אודות":** "מהדורה ערוכה (TSOOLGEE) – זו אינה הגרסה המקורית של Rufus", "נערך על ידי **צול גאה**" (המילים עצמן הן קישור ל-tsoolgee.uk), וכתובת לדיווח על בעיות במהדורה הזו.
+* **פרטי הקובץ** (מאפיינים ← פרטים): ‏`Rufus - TSOOLGEE edition (not the original Rufus)`.
+
 ## רישיון וקרדיט
 
 * **Rufus** נכתב על ידי [Pete Batard / Akeo Consulting](https://github.com/pbatard/rufus) ומופץ תחת **GPL גרסה 3**. ה-README המקורי נמצא ב-[README.rufus.md](README.rufus.md).
-* המהדורה הזו מופצת גם היא תחת [GPLv3](LICENSE.txt), עם קוד המקור המלא בריפו. אין לה קשר רשמי ל-Rufus או ל-Akeo, ואין לפנות אליהם בבעיות שנוגעות לפורק.
+* המהדורה הזו נערכה על ידי [**צול גאה**](https://tsoolgee.uk), ומופצת גם היא תחת [GPLv3](LICENSE.txt), עם קוד המקור המלא בריפו. אין לה קשר רשמי ל-Rufus או ל-Akeo, ואין לפנות אליהם בבעיות שנוגעות לפורק. בעיות במהדורה הזו מדווחים [כאן](https://github.com/tsoolgee/rufus-tsoolgee-edition/issues).
 * התוכנה מסופקת **ללא שום אחריות** (ראו סעיפים 15–16 ברישיון).
 
 </div>

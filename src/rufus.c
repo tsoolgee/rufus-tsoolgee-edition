@@ -2136,7 +2136,7 @@ static void InitDialog(HWND hDlg)
 		rufus_version[i] = (uint16_t)atoi(token);
 
 	// Redefine the title to be able to add "Alpha" or "Beta"
-	static_sprintf(tmp, APPLICATION_NAME " %d.%d.%d%s%s", rufus_version[0], rufus_version[1], rufus_version[2],
+	static_sprintf(tmp, APPLICATION_NAME " %d.%d.%d%s%s" TS_TITLE_SUFFIX, rufus_version[0], rufus_version[1], rufus_version[2],
 		IsAlphaOrBeta(), (ini_file != NULL)?"(Portable)":"");
 	SetWindowTextU(hDlg, tmp);
 	// Now that we have a title, we can find the handle of our Dialog
@@ -2677,6 +2677,10 @@ static INT_PTR CALLBACK MainCallback(HWND hDlg, UINT message, WPARAM wParam, LPA
 		case IDC_LIST_INTERNAL:
 			if ((HIWORD(wParam)) == BN_CLICKED)
 				TsOnInternalCheckboxClicked(hDlg);
+			break;
+		case IDC_TS_CREDIT:
+			if ((HIWORD(wParam)) == BN_CLICKED)
+				TsOnCreditClicked(hDlg);
 			break;
 		case IDC_LIST_USB_HDD:
 			if ((HIWORD(wParam)) == BN_CLICKED) {

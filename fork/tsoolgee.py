@@ -15,7 +15,7 @@ import subprocess
 import sys
 
 UPSTREAM = os.environ.get('UPSTREAM', 'pbatard/rufus')
-REPO = os.environ.get('GITHUB_REPOSITORY', 'tsoolgee/rufus')
+REPO = os.environ.get('GITHUB_REPOSITORY', 'tsoolgee/rufus-tsoolgee-edition')
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 

@@ -34,6 +34,7 @@
 #include <assert.h>
 
 #include "rufus.h"
+#include "tsoolgee.h"
 #include "missing.h"
 #include "resource.h"
 #include "msapi_utf8.h"
@@ -430,6 +431,8 @@ INT_PTR CALLBACK AboutCallback(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 			SendMessage(hEdit[i], EM_SETEVENTMASK, 0, ENM_LINK | ((i == 0) ? ENM_REQUESTRESIZE : 0));
 			SendMessage(hEdit[i], EM_SETBKGNDCOLOR, 0, (LPARAM)GetSysColor(COLOR_BTNFACE));
 		}
+		// TSOOLGEE: "edited version" notice and credit
+		TsAboutAddCredit(hEdit[0]);
 		// Need to send an explicit SetSel to avoid being positioned at the end of richedit control when tabstop is used
 		SendMessage(hEdit[1], EM_SETSEL, 0, 0);
 		SendMessage(hEdit[0], EM_REQUESTRESIZE, 0, 0);
@@ -456,6 +459,7 @@ INT_PTR CALLBACK AboutCallback(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				tr.chrg.cpMax = enl->chrg.cpMax;
 				SendMessageW(enl->nmhdr.hwndFrom, EM_GETTEXTRANGE, 0, (LPARAM)&tr);
 				wUrl[ARRAYSIZE(wUrl)-1] = 0;
+				TsTranslateAboutLink(wUrl, ARRAYSIZE(wUrl));
 				ShellExecuteW(hDlg, L"open", wUrl, NULL, NULL, SW_SHOWNORMAL);
 			}
 			break;

@@ -58,6 +58,7 @@ public static class W {
 '@
 
 $IDC_DEVICE = 1001; $IDC_LIST_USB_HDD = 1022; $IDC_LIST_INTERNAL = 1990; $IDC_LOG_EDIT = 1055
+$IDC_TS_CREDIT = 1991; $IDC_ABOUT = 1052
 $WM_COMMAND = 0x0111; $WM_SYSKEYDOWN = 0x0104; $BM_CLICK = 0x00F5; $BM_SETCHECK = 0x00F1
 $CB_GETCOUNT = 0x0146; $CB_SETCURSEL = 0x014E; $CB_SHOWDROPDOWN = 0x014F
 $IDOK = 1; $IDCANCEL = 2; $IDYES = 6; $IDNO = 7
@@ -120,6 +121,16 @@ if ($ri.Top -ne $ru.Top) { Fail "Internal drives checkbox is not on the same row
 $expected = if ($he) { 'כוננים פנימיים' } else { 'Internal drives' }
 if (-not ([W]::Text($hInt)).Contains($expected)) { Fail "Unexpected checkbox text '$([W]::Text($hInt))'" }
 
+# --- 1b. Edited-version credit: title, button
+if (-not ([W]::Text($main)).Contains('TSOOLGEE edition')) { Fail "Window title does not say 'TSOOLGEE edition'" }
+$hCredit = [W]::GetDlgItem($main, $IDC_TS_CREDIT)
+if ($hCredit -eq [IntPtr]::Zero -or -not [W]::IsWindowVisible($hCredit)) { Fail "Credit button not found / not visible" } else {
+	$rc = New-Object W+RECT; [W]::GetWindowRect($hCredit, [ref]$rc) | Out-Null
+	Note ("credit button '{0}' [{1},{2}-{3},{4}]" -f [W]::Text($hCredit), $rc.Left, $rc.Top, $rc.Right, $rc.Bottom)
+	if (-not ([W]::Text($hCredit)).Contains('צול גאה')) { Fail "Credit button text '$([W]::Text($hCredit))'" }
+	if ($rc.Left -lt $rm.Left -or $rc.Right -gt $rm.Right) { Fail "Credit button is outside of the window" }
+}
+
 # --- Dialog helpers
 $seen = @{}
 function Wait-Dialog([int]$timeoutSec = 30) {
@@ -142,6 +153,20 @@ function Press($h, $id) {
 	[W]::PostMessageW($b, $BM_CLICK, [IntPtr]::Zero, [IntPtr]::Zero) | Out-Null
 	Start-Sleep -Milliseconds 800
 	return $true
+}
+
+# --- 1c. About box carries the "edited version" notice
+[W]::PostMessageW($main, $WM_COMMAND, [IntPtr]$IDC_ABOUT, [IntPtr]::Zero) | Out-Null
+$d = Wait-Dialog 15
+if ($d -eq [IntPtr]::Zero) { Fail "About box did not open" } else {
+	Start-Sleep 1
+	Shot 'about'
+	# RichEdit text via WM_GETTEXT
+	$blurb = [W]::EditText([W]::GetDlgItem($d, 1033))
+	Note "about: $($blurb -replace "`r?`n", ' / ')"
+	if (-not $blurb.Contains('צול גאה')) { Fail "About box has no credit" }
+	if (-not $blurb.Contains('TSOOLGEE')) { Fail "About box does not say it is the TSOOLGEE edition" }
+	Press $d $IDOK | Out-Null
 }
 
 # --- 2. Enabling internal drives asks first
@@ -223,7 +248,7 @@ for ($i = 0; $i -lt 90; $i++) {
 	Start-Sleep 1
 }
 $log | Out-File -Encoding utf8 (Join-Path $OutDir "$Locale-log.txt")
-if ($log -notmatch 'raw\.githubusercontent\.com/tsoolgee/rufus/update-info') { Fail "Update check does not use the fork's update-info" }
+if ($log -notmatch 'raw\.githubusercontent\.com/tsoolgee/rufus-tsoolgee-edition/update-info') { Fail "Update check does not use the fork's update-info" }
 if ($log -match 'Version signature is invalid') { Fail "Update file signature is INVALID" }
 if ($RequireUpdateSignature -and $log -notmatch 'Version signature is valid') { Fail "Update file signature was not validated" }
 if ($log -match 'Version signature is valid') { Note "update signature valid" }

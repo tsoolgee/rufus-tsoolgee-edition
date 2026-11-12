@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <richedit.h>
+#include <shellapi.h>
 
 #include "rufus.h"
 #include "missing.h"
@@ -237,9 +239,103 @@ static void TsLayoutInternalCheckbox(HWND hDlg)
 	SetWindowPos(hInt, hUsb, rc.left + full - w_int, rc.top, w_int, h, 0);
 }
 
+/*
+ * "Edited by צול גאה" button, right-aligned on the "Drive Properties" header row (which only
+ * holds the header text on the other side), so that nothing else in the dialog has to move.
+ */
+static void TsCreateCreditButton(HWND hDlg)
+{
+	HWND hHdr = GetDlgItem(hDlg, IDS_DRIVE_PROPERTIES_TXT), hRef = GetDlgItem(hDlg, IDS_DEVICE_TXT);
+	HWND hSel = GetDlgItem(hDlg, IDC_SELECT), hBtn;
+	wchar_t* wtext;
+	RECT rh, rr, rs;
+	int w, h;
+
+	if ((hHdr == NULL) || (hRef == NULL) || (GetDlgItem(hDlg, IDC_TS_CREDIT) != NULL))
+		return;
+	wtext = utf8_to_wchar(TsText("נערך ע״י צול גאה ↗", "Edited by צול גאה ↗"));
+	hBtn = CreateWindowExW(0, L"BUTTON", (wtext != NULL) ? wtext : L"TSOOLGEE",
+		WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 0, 0, 10, 10, hDlg,
+		(HMENU)(UINT_PTR)IDC_TS_CREDIT, GetModuleHandle(NULL), NULL);
+	free(wtext);
+	if (hBtn == NULL)
+		return;
+	SendMessage(hBtn, WM_SETFONT, SendMessage(hRef, WM_GETFONT, 0, 0), FALSE);
+	GetWindowRect(hHdr, &rh);
+	MapWindowPoints(NULL, hDlg, (POINT*)&rh, 2);
+	GetWindowRect(hRef, &rr);
+	MapWindowPoints(NULL, hDlg, (POINT*)&rr, 2);
+	h = rh.bottom - rh.top;
+	if (hSel != NULL) {
+		GetWindowRect(hSel, &rs);
+		h = min(h, rs.bottom - rs.top);
+	}
+	w = GetTextSize(hBtn, NULL).cx + GetSystemMetrics(SM_CXEDGE) * 8 + 8;
+	SetWindowPos(hBtn, NULL, rr.right - w, rh.top + ((rh.bottom - rh.top) - h) / 2, w, h, SWP_NOZORDER);
+	CreateTooltip(hBtn, TsText("מהדורה ערוכה של Rufus, זו אינה הגרסה המקורית - " TS_CREDIT_URL,
+		"Edited version of Rufus, not the original - " TS_CREDIT_URL), -1);
+}
+
+void TsOnCreditClicked(HWND hDlg)
+{
+	ShellExecuteA(hDlg, "open", TS_CREDIT_URL, NULL, NULL, SW_SHOWNORMAL);
+}
+
+/*
+ * About box: insert the "edited version" notice right after the upstream issues URL, and turn
+ * the words "צול גאה" into a link (the link target is resolved by TsTranslateAboutLink()).
+ */
+void TsAboutAddCredit(HWND hEdit)
+{
+	SETTEXTEX st = { ST_SELECTION, CP_UTF8 };
+	FINDTEXTEXW ft = { 0 };
+	CHARFORMAT2W cf = { 0 };
+	char rtf[1024];
+	LRESULT pos;
+
+	if (hEdit == NULL)
+		return;
+	// After the "report bugs" URL of upstream, or at the very end
+	ft.chrg.cpMin = 0;
+	ft.chrg.cpMax = -1;
+	ft.lpstrText = L"github.com/pbatard/rufus/issues";
+	pos = SendMessageW(hEdit, EM_FINDTEXTEXW, FR_DOWN, (LPARAM)&ft);
+	if (pos >= 0)
+		SendMessage(hEdit, EM_SETSEL, ft.chrgText.cpMax, ft.chrgText.cpMax);
+	else
+		SendMessage(hEdit, EM_SETSEL, -1, -1);
+	static_sprintf(rtf, "{\\rtf1\\ansi\\line\\line\\b\\fs18 %s\\b0\\line\\fs18 %s צול גאה\\line %s\\line "
+		TS_REPO_URL "/issues}",
+		TsText("מהדורה ערוכה (TSOOLGEE) - זו אינה הגרסה המקורית של Rufus", "Edited version (TSOOLGEE) - this is not the original Rufus"),
+		TsText("נערך על ידי", "Edited by"),
+		TsText("דיווח על בעיות במהדורה הזו:", "Report issues with this edition at:"));
+	SendMessageA(hEdit, EM_SETTEXTEX, (WPARAM)&st, (LPARAM)rtf);
+
+	// Make the credit name a link
+	ft.chrg.cpMin = 0;
+	ft.chrg.cpMax = -1;
+	ft.lpstrText = TS_CREDIT_NAME_W;
+	if (SendMessageW(hEdit, EM_FINDTEXTEXW, FR_DOWN, (LPARAM)&ft) >= 0) {
+		SendMessage(hEdit, EM_EXSETSEL, 0, (LPARAM)&ft.chrgText);
+		cf.cbSize = sizeof(cf);
+		cf.dwMask = CFM_LINK | CFM_UNDERLINE;
+		cf.dwEffects = CFE_LINK | CFE_UNDERLINE;
+		SendMessageW(hEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
+	}
+	SendMessage(hEdit, EM_SETSEL, -1, -1);
+}
+
+void TsTranslateAboutLink(wchar_t* link, size_t link_size)
+{
+	if ((link != NULL) && (wcscmp(link, TS_CREDIT_NAME_W) == 0))
+		MultiByteToWideChar(CP_UTF8, 0, TS_CREDIT_URL, -1, link, (int)link_size);
+}
+
 void TsInitInternalCheckbox(HWND hDlg)
 {
 	HWND hInt = GetDlgItem(hDlg, IDC_LIST_INTERNAL);
+
+	TsCreateCreditButton(hDlg);
 
 	if (hInt == NULL)
 		return;

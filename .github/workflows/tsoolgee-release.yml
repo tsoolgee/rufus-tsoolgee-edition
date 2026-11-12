@@ -239,7 +239,7 @@ jobs:
         if not pre:
             rows += [('rufus-%sp.exe' % v, 'נייד (Portable)'), ('rufus-%s_x86.exe' % v, '32 ביט'), ('rufus-%s_arm64.exe' % v, 'ARM64')]
         files = '| קובץ | |\n|---|---|\n' + '\n'.join('| `%s` | %s |' % r for r in rows)
-        notes = f"""**Rufus {v} — מהדורת TSOOLGEE**
+        notes = f"""**Rufus {v} — מהדורת TSOOLGEE** · גרסה ערוכה, לא Rufus המקורי · נערך על ידי [צול גאה](https://tsoolgee.uk)
         {beta}
         הגרסה נבנתה אוטומטית מ-[Rufus {v} המקורי]({url}) של Pete Batard, והשינויים של המהדורה הוחלו עליה מחדש:
 
@@ -249,7 +249,7 @@ jobs:
 
         {files}
 
-        הקבצים אינם חתומים בחתימת Authenticode, ולכן Windows עלול להציג אזהרת SmartScreen, ו-Rufus יציג בהפעלה הראשונה הודעה שזו אינה הגרסה הרשמית. לפרטים: [README](https://github.com/tsoolgee/rufus#readme).
+        הקבצים אינם חתומים בחתימת Authenticode, ולכן Windows עלול להציג אזהרת SmartScreen, ו-Rufus יציג בהפעלה הראשונה הודעה שזו אינה הגרסה הרשמית. לפרטים: [README](https://github.com/tsoolgee/rufus-tsoolgee-edition#readme).
 
         ---
 
@@ -265,9 +265,9 @@ jobs:
           if [ "$T" = "$NEWEST_STABLE" ]; then FLAGS="$FLAGS --latest"; else FLAGS="$FLAGS --latest=false"; fi
           if gh release view "$T" >/dev/null 2>&1; then
             gh release upload "$T" "$D"/* --clobber
-            gh release edit "$T" --title "Rufus $V (TSOOLGEE)" --notes-file notes.md $FLAGS
+            gh release edit "$T" --title "Rufus $V – TSOOLGEE edition" --notes-file notes.md $FLAGS
           else
-            gh release create "$T" "$D"/* --verify-tag --title "Rufus $V (TSOOLGEE)" --notes-file notes.md $FLAGS
+            gh release create "$T" "$D"/* --verify-tag --title "Rufus $V – TSOOLGEE edition" --notes-file notes.md $FLAGS
           fi
 
           # Update files: stable channel for the newest stable, beta channel for a newer BETA

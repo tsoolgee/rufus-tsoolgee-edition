@@ -25,14 +25,21 @@
 #pragma once
 
 #define TS_EDITION_NAME             "TSOOLGEE"
-#define TS_REPO_URL                 "https://github.com/tsoolgee/rufus"
+#define TS_REPO_URL                 "https://github.com/tsoolgee/rufus-tsoolgee-edition"
 
 /* Update check: the fork publishes its own (signed) version files on the 'update-info' branch */
 #define TS_UPDATE_SERVER            "https://raw.githubusercontent.com"
-#define TS_UPDATE_PATH              "tsoolgee/rufus/update-info/"
+#define TS_UPDATE_PATH              "tsoolgee/rufus-tsoolgee-edition/update-info/"
 
 /* New checkbox, sitting on the same row as "List USB Hard Drives" */
 #define IDC_LIST_INTERNAL           1990
+/* Credit button, on the "Drive Properties" header row */
+#define IDC_TS_CREDIT               1991
+
+/* Credit: this is an edited version of Rufus, by tsoolgee */
+#define TS_CREDIT_URL               "https://tsoolgee.uk"
+#define TS_CREDIT_NAME_W            L"צול גאה"
+#define TS_TITLE_SUFFIX             " - TSOOLGEE edition"
 
 /* Internal (non USB) drives are only listed when the user explicitly enabled them */
 extern BOOL enable_internal_drives;
@@ -53,6 +60,9 @@ const char* TsDriveTag(DWORD DriveIndex);
 void TsInitInternalCheckbox(HWND hDlg);
 void TsOnInternalCheckboxClicked(HWND hDlg);
 void TsEnableInternalCheckbox(HWND hDlg, BOOL enable);
+void TsOnCreditClicked(HWND hDlg);
+void TsAboutAddCredit(HWND hEdit);
+void TsTranslateAboutLink(wchar_t* link, size_t link_size);
 BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name);
 
 /* Signatures: upstream files are signed with the upstream key, TSOOLGEE update files with ours */
