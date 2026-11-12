@@ -442,23 +442,32 @@ BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name)
 
 /*
  * Accept a file signed with the upstream key (DBX, GRUB, Syslinux, Fido... from rufus.ie) or with
- * the tsoolgee key (the update files and executables of this edition). The validator wipes the
- * buffer when a signature does not match, so the first attempt is made on a copy.
+ * the tsoolgee key (the update files and executables of this edition). The validator modifies
+ * its inputs (it reverses the signature in place, and wipes the buffer on a mismatch), so the
+ * probe with the upstream key is made on copies of both; the real call is then made on the
+ * caller's buffers, which therefore end up exactly as with an unmodified Rufus.
  */
 BOOL TsValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,
 	const uint8_t* upstream_modulus, size_t upstream_modulus_size)
 {
 	BYTE* copy = (dwBufferLen != 0) ? (BYTE*)malloc(dwBufferLen) : NULL;
-	BOOL r;
+	BYTE* sig_copy = (dwSigLen != 0) ? (BYTE*)malloc(dwSigLen) : NULL;
+	BOOL r, upstream;
 
-	if (copy == NULL)
+	if ((copy == NULL) || (sig_copy == NULL)) {
+		free(copy);
+		free(sig_copy);
 		return FALSE;
+	}
 	memcpy(copy, pbBuffer, dwBufferLen);
-	r = ValidateOpensslSignatureWithKey(copy, dwBufferLen, pbSignature, dwSigLen,
+	memcpy(sig_copy, pbSignature, dwSigLen);
+	upstream = ValidateOpensslSignatureWithKey(copy, dwBufferLen, sig_copy, dwSigLen,
 		upstream_modulus, upstream_modulus_size);
 	free(copy);
-	if (r)
-		return TRUE;
+	free(sig_copy);
+	if (upstream)
+		return ValidateOpensslSignatureWithKey(pbBuffer, dwBufferLen, pbSignature, dwSigLen,
+			upstream_modulus, upstream_modulus_size);
 	r = ValidateOpensslSignatureWithKey(pbBuffer, dwBufferLen, pbSignature, dwSigLen,
 		ts_rsa_pubkey_modulus, sizeof(ts_rsa_pubkey_modulus));
 	if (r)
