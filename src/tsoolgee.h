@@ -1,0 +1,60 @@
+/*
+ * Rufus TSOOLGEE edition - additions on top of Rufus
+ * Copyright © 2026 tsoolgee
+ *
+ * Based on Rufus: The Reliable USB Formatting Utility
+ * Copyright © 2011-2026 Pete Batard <pete@akeo.ie>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <windows.h>
+#include <stdint.h>
+
+#pragma once
+
+#define TS_EDITION_NAME             "TSOOLGEE"
+#define TS_REPO_URL                 "https://github.com/tsoolgee/rufus"
+
+/* Update check: the fork publishes its own (signed) version files on the 'update-info' branch */
+#define TS_UPDATE_SERVER            "https://raw.githubusercontent.com"
+#define TS_UPDATE_PATH              "tsoolgee/rufus/update-info/"
+
+/* New checkbox, sitting on the same row as "List USB Hard Drives" */
+#define IDC_LIST_INTERNAL           1990
+
+/* Internal (non USB) drives are only listed when the user explicitly enabled them */
+extern BOOL enable_internal_drives;
+#define TS_LIST_INTERNAL_DRIVES     (enable_internal_drives)
+
+/* Hebrew if the UI is in Hebrew, English otherwise */
+const char* TsText(const char* he, const char* en);
+
+/* Drive classification */
+void TsClearInternalMarks(void);
+void TsMarkInternal(DWORD DriveIndex);
+BOOL TsIsInternalDrive(DWORD DriveIndex);
+BOOL TsIsSystemDrive(DWORD DriveIndex);
+BOOL TsIsAppDrive(DWORD DriveIndex);
+const char* TsDriveTag(DWORD DriveIndex);
+
+/* UI */
+void TsInitInternalCheckbox(HWND hDlg);
+void TsOnInternalCheckboxClicked(HWND hDlg);
+void TsEnableInternalCheckbox(HWND hDlg, BOOL enable);
+BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name);
+
+/* Signatures: upstream files are signed with the upstream key, TSOOLGEE update files with ours */
+BOOL TsValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,
+	const uint8_t* upstream_modulus, size_t upstream_modulus_size);

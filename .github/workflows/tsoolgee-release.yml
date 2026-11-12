@@ -1,0 +1,309 @@
+# Rufus TSOOLGEE - follow upstream Rufus releases automatically.
+#
+# Every 6 hours: for each upstream release (>= fork/MIN_VERSION) that has no TSOOLGEE release yet,
+# re-apply the TSOOLGEE changes on top of it (fork/generate.sh), build it, smoke-test the UI,
+# sign it, publish a release with the very same tag/version, and update the signed update files
+# on the 'update-info' branch that the application checks.
+#
+# Secrets: RELEASE_TOKEN      token of the repository owner (repo + workflow scopes) - pushes tags
+#                             and creates the releases under the owner's name
+#          UPDATE_SIGNING_KEY PEM RSA private key matching the public key in src/tsoolgee.c
+
+name: TSOOLGEE sync & release
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Upstream tag to (re)build, e.g. v4.15 - empty = every missing release'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tsoolgee-release
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.plan.outputs.tags }}
+      builds: ${{ steps.plan.outputs.builds }}
+      count: ${{ steps.plan.outputs.count }}
+    env:
+      GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+    steps:
+    - name: Checkout the tsoolgee branch
+      uses: actions/checkout@v7
+      with:
+        ref: tsoolgee
+        fetch-depth: 0
+        token: ${{ secrets.RELEASE_TOKEN }}
+
+    - name: Keep the schedule alive
+      # GitHub disables scheduled workflows of repositories without activity for 60 days
+      run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/tsoolgee-release.yml/enable" || true
+
+    - name: Fetch upstream tags
+      run: git fetch --no-tags https://github.com/pbatard/rufus.git '+refs/tags/*:refs/upstream-tags/*'
+
+    - name: Find upstream releases without a TSOOLGEE release
+      id: plan
+      env:
+        FORCE_TAG: ${{ inputs.tag }}
+      run: python3 fork/tsoolgee.py plan
+
+    - name: Re-apply the TSOOLGEE changes and push the tags
+      if: steps.plan.outputs.count != '0'
+      run: |
+        SRC=$(git rev-parse HEAD)
+        CUR=$(cat fork/BASE | tr -d '\r\n ')
+        LEASE=$SRC
+        # The checkout changes under our feet: run the tools from a copy
+        cp -r fork "$RUNNER_TEMP/fork"
+        for T in $(echo '${{ steps.plan.outputs.tags }}' | jq -r '.[]'); do
+          bash "$RUNNER_TEMP/fork/generate.sh" "$T" "$SRC"
+          git push -f origin "refs/tags/$T"
+          # Move the tsoolgee branch forward when the upstream base gets newer
+          if python3 "$RUNNER_TEMP/fork/tsoolgee.py" newer "$T" "$CUR"; then
+            git push --force-with-lease=tsoolgee:$LEASE origin HEAD:refs/heads/tsoolgee
+            LEASE=$(git rev-parse HEAD)
+            CUR=$T
+          fi
+        done
+
+    - name: Report a failed sync
+      if: failure()
+      run: |
+        gh issue create --repo "${{ github.repository }}" \
+          --title "Automatic sync with upstream failed ($(date -u +%Y-%m-%d))" \
+          --body "The TSOOLGEE changes could not be re-applied on a new upstream Rufus release. See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJSON(needs.plan.outputs.builds) }}
+    steps:
+    - name: Checkout ${{ matrix.tag }}
+      uses: actions/checkout@v7
+      with:
+        ref: refs/tags/${{ matrix.tag }}
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v3
+      with:
+        msbuild-architecture: x64
+
+    - name: Install UPX
+      uses: crazy-max/ghaction-upx@v4
+      with:
+        install-only: true
+
+    - name: Set BETA
+      id: set_beta
+      if: ${{ matrix.beta }}
+      shell: bash
+      run: |
+        echo "option=/DBETA" >> $GITHUB_OUTPUT
+        sed -b -i 's/VALUE "InternalName", "Rufus"/VALUE "InternalName", "Rufus (BETA)"/' ./src/rufus.rc
+
+    - name: Build
+      shell: cmd
+      run: |
+        set ExternalCompilerOptions=${{ steps.set_beta.outputs.option }}
+        msbuild ./rufus.sln /m /p:Configuration=Release,Platform=${{ matrix.arch }}
+        if errorlevel 1 exit /b 1
+        move .\${{ matrix.arch }}\Release\rufus.exe .\rufus_${{ matrix.arch }}.exe
+
+    - name: Name the executables like upstream
+      shell: bash
+      run: |
+        V=${{ matrix.tag }}; V=${V#v}
+        mkdir dist
+        case ${{ matrix.arch }} in
+          x64)   cp rufus_x64.exe "dist/rufus-$V.exe"
+                 [ "${{ matrix.beta }}" = "true" ] || cp rufus_x64.exe "dist/rufus-${V}p.exe" ;;
+          *)     cp rufus_${{ matrix.arch }}.exe "dist/rufus-${V}_${{ matrix.arch }}.exe" ;;
+        esac
+        # Same as upstream: UPX for x86/x64 release executables
+        [ "${{ matrix.arch }}" = "arm64" ] || upx --lzma --best dist/*.exe
+        sha256sum dist/*.exe
+
+    - name: Upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ matrix.tag }}_${{ matrix.arch }}
+        path: dist/*.exe
+
+  uitest:
+    needs: [plan, build]
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        tag: ${{ fromJSON(needs.plan.outputs.tags) }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: tsoolgee
+        sparse-checkout: fork
+    - uses: actions/download-artifact@v8
+      with:
+        name: ${{ matrix.tag }}_x64
+        path: dist
+    - name: UI smoke test (English + Hebrew)
+      shell: pwsh
+      run: |
+        $v = '${{ matrix.tag }}'.Substring(1)
+        New-Item -ItemType Directory run | Out-Null
+        # A plain "rufus.exe" skips the first-run update prompt
+        Copy-Item "dist/rufus-$v.exe" run/rufus.exe
+        $ok = $true
+        foreach ($l in 'en-US', 'he-IL') {
+          & ./fork/uitest.ps1 -Exe (Resolve-Path run/rufus.exe) -OutDir shots/${{ matrix.tag }} -Locale $l
+          if ($LASTEXITCODE -ne 0) { $ok = $false }
+        }
+        if (-not $ok) { exit 1 }
+    - name: Upload screenshots
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: shots_${{ matrix.tag }}
+        path: shots
+
+  release:
+    needs: [plan, build, uitest]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+    steps:
+    - name: Checkout the tsoolgee branch
+      uses: actions/checkout@v7
+      with:
+        ref: tsoolgee
+        fetch-depth: 0
+        token: ${{ secrets.RELEASE_TOKEN }}
+
+    - name: Fetch upstream tags
+      run: git fetch --no-tags https://github.com/pbatard/rufus.git '+refs/tags/*:refs/upstream-tags/*'
+
+    - uses: actions/download-artifact@v8
+      with:
+        path: artifacts
+
+    - name: Sign and publish the releases
+      env:
+        UPDATE_SIGNING_KEY: ${{ secrets.UPDATE_SIGNING_KEY }}
+      run: |
+        set -euo pipefail
+        KEY="$RUNNER_TEMP/key.pem"
+        printf '%s\n' "$UPDATE_SIGNING_KEY" > "$KEY"
+        trap 'rm -f "$KEY"' EXIT
+        git config user.name tsoolgee
+        git config user.email 291792265+tsoolgee@users.noreply.github.com
+        mkdir -p info shots
+        # Upstream release data (prerelease flag, notes) and the newest stable/beta upstream tags
+        gh api --paginate "repos/pbatard/rufus/releases?per_page=100" --jq '.[]' | jq -s '.' > upstream.json
+        NEWEST_STABLE=$(python3 -c "import json,sys; sys.path.insert(0,'fork'); from tsoolgee import tag_key; r=[x['tag_name'] for x in json.load(open('upstream.json')) if not x['draft'] and not x['prerelease'] and tag_key(x['tag_name'])]; print(max(r,key=tag_key))")
+        NEWEST_ANY=$(python3 -c "import json,sys; sys.path.insert(0,'fork'); from tsoolgee import tag_key; r=[x['tag_name'] for x in json.load(open('upstream.json')) if not x['draft'] and tag_key(x['tag_name'])]; print(max(r,key=tag_key))")
+        echo "Newest upstream stable: $NEWEST_STABLE, newest upstream: $NEWEST_ANY"
+
+        for T in $(echo '${{ needs.plan.outputs.tags }}' | jq -r '.[]'); do
+          V=${T#v}
+          D="out/$T"; mkdir -p "$D"
+          cp artifacts/${T}_*/*.exe "$D/"
+          # Same .sig files as upstream (the application checks them when it updates itself)
+          for f in "$D"/*.exe; do
+            case "$f" in *p.exe) continue ;; esac
+            openssl dgst -sha256 -sign "$KEY" -out "$f.sig" "$f"
+          done
+          PRE=$(jq -r --arg t "$T" '.[] | select(.tag_name==$t) | .prerelease' upstream.json)
+          URL=$(jq -r --arg t "$T" '.[] | select(.tag_name==$t) | .html_url' upstream.json)
+          jq -r --arg t "$T" '.[] | select(.tag_name==$t) | .body // ""' upstream.json > upstream_body.md
+          V="$V" URL="$URL" PRE="$PRE" python3 - <<'PY'
+        import os
+        v, url, pre = os.environ['V'], os.environ['URL'], os.environ['PRE'] == 'true'
+        body = open('upstream_body.md', encoding='utf-8').read().strip()
+        beta = '\n> ⚠️ זוהי גרסת **בטא**, בדיוק כמו במקור.\n' if pre else ''
+        rows = [('rufus-%s.exe' % v, '64 ביט (מומלץ)')]
+        if not pre:
+            rows += [('rufus-%sp.exe' % v, 'נייד (Portable)'), ('rufus-%s_x86.exe' % v, '32 ביט'), ('rufus-%s_arm64.exe' % v, 'ARM64')]
+        files = '| קובץ | |\n|---|---|\n' + '\n'.join('| `%s` | %s |' % r for r in rows)
+        notes = f"""**Rufus {v} — מהדורת TSOOLGEE**
+        {beta}
+        הגרסה נבנתה אוטומטית מ-[Rufus {v} המקורי]({url}) של Pete Batard, והשינויים של המהדורה הוחלו עליה מחדש:
+
+        - **תיבת סימון חדשה "כוננים פנימיים (!)"** (תחת "הצגת מאפייני כונן מתקדמים") — מציגה גם כוננים פנימיים (SATA / NVMe / IDE), כולל הדיסק שעליו Windows מותקן.
+        - **⚠️ אזהרות נוספות** — אישור בהפעלת התיבה, אזהרה לפני צריבה לכונן פנימי, ושתי אזהרות נוספות לפני צריבה **לדיסק שממנו Windows פועל**.
+        - **עדכון אוטומטי מהפורק** — בדיקת העדכונים בתוכנה מצביעה על הריפו הזה ולא על rufus.ie.
+
+        {files}
+
+        הקבצים אינם חתומים בחתימת Authenticode, ולכן Windows עלול להציג אזהרת SmartScreen, ו-Rufus יציג בהפעלה הראשונה הודעה שזו אינה הגרסה הרשמית. לפרטים: [README](https://github.com/tsoolgee/rufus#readme).
+
+        ---
+
+        ### השינויים בגרסה המקורית ({v})
+
+        {body}
+        """
+        import textwrap
+        open('notes.md', 'w', encoding='utf-8').write(textwrap.dedent(notes))
+        PY
+          FLAGS=""
+          [ "$PRE" = "true" ] && FLAGS="--prerelease"
+          if [ "$T" = "$NEWEST_STABLE" ]; then FLAGS="$FLAGS --latest"; else FLAGS="$FLAGS --latest=false"; fi
+          if gh release view "$T" >/dev/null 2>&1; then
+            gh release upload "$T" "$D"/* --clobber
+            gh release edit "$T" --title "Rufus $V (TSOOLGEE)" --notes-file notes.md $FLAGS
+          else
+            gh release create "$T" "$D"/* --verify-tag --title "Rufus $V (TSOOLGEE)" --notes-file notes.md $FLAGS
+          fi
+
+          # Update files: stable channel for the newest stable, beta channel for a newer BETA
+          CHANNEL=""
+          if [ "$T" = "$NEWEST_STABLE" ]; then CHANNEL=stable
+          elif [ "$PRE" = "true" ] && [ "$T" = "$NEWEST_ANY" ]; then CHANNEL=beta; fi
+          if [ -n "$CHANNEL" ]; then
+            git show "refs/tags/$T:src/rufus.rc" > "$RUNNER_TEMP/rufus.rc"
+            RC_PATH="$RUNNER_TEMP/rufus.rc" python3 fork/tsoolgee.py ver "$T" info
+          fi
+          [ -d artifacts/shots_$T ] && cp -r artifacts/shots_$T/. shots/ || true
+        done
+
+        # Publish the update files (signed) on the update-info branch
+        if ls info/*.ver >/dev/null 2>&1; then
+          for f in info/*.ver; do openssl dgst -sha256 -sign "$KEY" -out "$f.sig" "$f"; done
+          rm -rf ui && mkdir ui && cd ui
+          git init -q
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin update-info; then git checkout -q -b update-info FETCH_HEAD; else git checkout -q --orphan update-info; fi
+          cp ../info/* .
+          printf '# update-info\n\nSigned version files read by the "Check for updates" feature of Rufus TSOOLGEE.\nGenerated automatically - do not edit.\n' > README.md
+          git add -A
+          git -c user.name=tsoolgee -c user.email=291792265+tsoolgee@users.noreply.github.com commit -q -m "Update files for $(ls ../info/*.ver | xargs -n1 basename | tr '\n' ' ')" || true
+          git push -q origin update-info
+          cd ..
+        fi
+
+        # Keep the UI test screenshots of each release (used by the README)
+        if [ -n "$(ls -A shots 2>/dev/null)" ]; then
+          rm -rf sh && mkdir sh && cd sh
+          git init -q
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin screenshots; then git checkout -q -b screenshots FETCH_HEAD; else git checkout -q --orphan screenshots; fi
+          cp -r ../shots/. .
+          git add -A
+          git -c user.name=tsoolgee -c user.email=291792265+tsoolgee@users.noreply.github.com commit -q -m "UI test screenshots" || true
+          git push -q origin screenshots
+        fi

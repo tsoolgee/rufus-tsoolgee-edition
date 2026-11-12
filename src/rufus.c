@@ -50,6 +50,7 @@
 #include "vhd.h"
 #include "wue.h"
 #include "drive.h"
+#include "tsoolgee.h"
 #include "cregex.h"
 #include "settings.h"
 #include "darkmode.h"
@@ -868,6 +869,7 @@ void EnableControls(BOOL enable, BOOL remove_checkboxes)
 	EnableWindow(hBootType, enable);
 	EnableWindow(hSelectImage, enable);
 	EnableWindow(GetDlgItem(hMainDialog, IDC_LIST_USB_HDD), enable);
+	TsEnableInternalCheckbox(hMainDialog, enable);
 	EnableWindow(hAdvancedDeviceToolbar, enable);
 	EnableWindow(hAdvancedFormatToolbar, enable);
 	SendMessage(hMultiToolbar, TB_ENABLEBUTTON, (WPARAM)IDC_LANG, (LPARAM)enable);
@@ -2271,6 +2273,7 @@ static void InitDialog(HWND hDlg)
 	SetBootTypeDropdownWidth();
 
 	CheckDlgButton(hMainDialog, IDC_LIST_USB_HDD, enable_HDDs ? BST_CHECKED : BST_UNCHECKED);
+	TsInitInternalCheckbox(hDlg);
 
 	PrintInfo(0, MSG_210);
 }
@@ -2670,6 +2673,10 @@ static INT_PTR CALLBACK MainCallback(HWND hDlg, UINT message, WPARAM wParam, LPA
 				validate_md5sum = IsChecked(IDC_UEFI_MEDIA_VALIDATION);
 				WriteSettingBool(SETTING_ENABLE_RUNTIME_VALIDATION, validate_md5sum);
 			}
+			break;
+		case IDC_LIST_INTERNAL:
+			if ((HIWORD(wParam)) == BN_CLICKED)
+				TsOnInternalCheckboxClicked(hDlg);
 			break;
 		case IDC_LIST_USB_HDD:
 			if ((HIWORD(wParam)) == BN_CLICKED) {
@@ -3129,6 +3136,9 @@ static INT_PTR CALLBACK MainCallback(HWND hDlg, UINT message, WPARAM wParam, LPA
 		PrintStatus(0, MSG_142);
 
 		GetWindowTextU(hDeviceList, tmp, ARRAYSIZE(tmp));
+		// TSOOLGEE: extra warnings for internal drives and for the disk Windows runs from
+		if (!TsConfirmTargetDrive(hDlg, SelectedDrive.DeviceNumber, tmp))
+			goto aborted_start;
 		if (Notification(MB_OKCANCEL | MB_ICONWARNING, APPLICATION_NAME, lmprintf(MSG_003, tmp)) != IDOK)
 			goto aborted_start;
 		if ((SelectedDrive.nPartitions > 1) && (Notification(MB_OKCANCEL | MB_ICONWARNING, lmprintf(MSG_094), lmprintf(MSG_093)) != IDOK))
