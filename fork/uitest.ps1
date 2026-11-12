@@ -139,6 +139,14 @@ function Wait-Dialog([int]$timeoutSec = 30) {
 			if ($h -ne $main -and -not $seen.ContainsKey($h) -and [W]::Class($h) -eq '#32770') {
 				$seen[$h] = $true
 				Start-Sleep -Milliseconds 700
+				# Upstream's own "DBX update available" prompt can pop up at any time on older
+				# versions: decline it and keep waiting for the dialog we are after
+				if ([W]::AllText($h) -match 'DBX') {
+					Note "declining upstream DBX update prompt"
+					Shot 'dbx-prompt'
+					if (-not (Press $h $IDNO)) { Press $h $IDCANCEL | Out-Null }
+					continue
+				}
 				return $h
 			}
 		}
@@ -240,6 +248,12 @@ if ($sysIndex -ge 0) {
 # --- 5. Log: update check from the fork, signature valid
 $log = ''
 for ($i = 0; $i -lt 90; $i++) {
+	foreach ($h in [W]::Windows($proc.Id, $true)) {
+		if ($h -ne $main -and [W]::Class($h) -eq '#32770' -and ([W]::AllText($h) -match 'DBX')) {
+			Note "declining upstream DBX update prompt"
+			if (-not (Press $h $IDNO)) { Press $h $IDCANCEL | Out-Null }
+		}
+	}
 	foreach ($h in [W]::Windows($proc.Id, $false)) {
 		$e = [W]::GetDlgItem($h, $IDC_LOG_EDIT)
 		if ($e -ne [IntPtr]::Zero) { $log = [W]::EditText($e) }
