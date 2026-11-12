@@ -262,7 +262,7 @@ for ($i = 0; $i -lt 90; $i++) {
 	Start-Sleep 1
 }
 $log | Out-File -Encoding utf8 (Join-Path $OutDir "$Locale-log.txt")
-if ($log -notmatch 'raw\.githubusercontent\.com/tsoolgee/rufus-tsoolgee-edition/update-info') { Fail "Update check does not use the fork's update-info" }
+if ($log -notmatch 'github\.com/tsoolgee/rufus-tsoolgee-edition/releases/latest/download') { Fail "Update check does not use the fork's update-info" }
 if ($log -match 'Version signature is invalid') { Fail "Update file signature is INVALID" }
 if ($RequireUpdateSignature -and $log -notmatch 'Version signature is valid') { Fail "Update file signature was not validated" }
 if ($log -match 'Version signature is valid') { Note "update signature valid" }

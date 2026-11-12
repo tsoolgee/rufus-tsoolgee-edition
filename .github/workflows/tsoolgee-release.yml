@@ -3,7 +3,7 @@
 # Every 6 hours: for each upstream release (>= fork/MIN_VERSION) that has no TSOOLGEE release yet,
 # re-apply the TSOOLGEE changes on top of it (fork/generate.sh), build it, smoke-test the UI,
 # sign it, publish a release with the very same tag/version, and update the signed update files
-# on the 'update-info' branch that the application checks.
+# as assets of the latest stable release, where the application checks for updates.
 #
 # Secrets: RELEASE_TOKEN      token of the repository owner (repo + workflow scopes) - pushes tags
 #                             and creates the releases under the owner's name
@@ -171,14 +171,20 @@ jobs:
         path: dist
     - name: UI smoke test (English + Hebrew)
       shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
+        # Once update files are published, the update check must validate their signature
+        $assets = gh api "repos/${{ github.repository }}/releases/latest" --jq '.assets[].name' 2>$null
+        $req = @{}
+        if ($assets -contains 'Rufus_win.ver') { $req = @{ RequireUpdateSignature = $true }; Write-Host "update files published: signature check required" }
         $v = '${{ matrix.tag }}'.Substring(1)
         New-Item -ItemType Directory run | Out-Null
         # A plain "rufus.exe" skips the first-run update prompt
         Copy-Item "dist/rufus-$v.exe" run/rufus.exe
         $ok = $true
         foreach ($l in 'en-US', 'he-IL') {
-          & ./fork/uitest.ps1 -Exe (Resolve-Path run/rufus.exe) -OutDir shots/${{ matrix.tag }} -Locale $l
+          & ./fork/uitest.ps1 -Exe (Resolve-Path run/rufus.exe) -OutDir shots/${{ matrix.tag }} -Locale $l @req
           if ($LASTEXITCODE -ne 0) { $ok = $false; Write-Host "::error::UI test failed for $l (exit code $LASTEXITCODE)" }
         }
         if (-not $ok) { exit 1 }
@@ -289,19 +295,11 @@ jobs:
           [ -d artifacts/shots_$T ] && cp -r artifacts/shots_$T/. shots/ || true
         done
 
-        # Publish the update files (signed) on the update-info branch
+        # Publish the signed update files as assets of the latest stable release: the application
+        # reads them from .../releases/latest/download/ (release assets also get through NetFree)
         if ls info/*.ver >/dev/null 2>&1; then
           for f in info/*.ver; do openssl dgst -sha256 -sign "$KEY" -out "$f.sig" "$f"; done
-          rm -rf ui && mkdir ui && cd ui
-          git init -q
-          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          if git fetch -q origin update-info; then git checkout -q -b update-info FETCH_HEAD; else git checkout -q --orphan update-info; fi
-          cp ../info/* .
-          printf '# update-info\n\nSigned version files read by the "Check for updates" feature of Rufus TSOOLGEE.\nGenerated automatically - do not edit.\n' > README.md
-          git add -A
-          git -c user.name=tsoolgee -c user.email=291792265+tsoolgee@users.noreply.github.com commit -q -m "Update files for $(ls ../info/*.ver | xargs -n1 basename | tr '\n' ' ')" || true
-          git push -q origin update-info
-          cd ..
+          gh release upload "$NEWEST_STABLE" info/* --clobber
         fi
 
         # Keep the UI test screenshots of each release (used by the README)

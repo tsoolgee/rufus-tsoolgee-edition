@@ -27,9 +27,12 @@
 #define TS_EDITION_NAME             "TSOOLGEE"
 #define TS_REPO_URL                 "https://github.com/tsoolgee/rufus-tsoolgee-edition"
 
-/* Update check: the fork publishes its own (signed) version files on the 'update-info' branch */
-#define TS_UPDATE_SERVER            "https://raw.githubusercontent.com"
-#define TS_UPDATE_PATH              "tsoolgee/rufus-tsoolgee-edition/update-info/"
+/*
+ * Update check: the fork's own (signed) version files are assets of its latest release.
+ * NB: not raw.githubusercontent.com - filtered networks (e.g. NetFree) block the .sig files there.
+ */
+#define TS_UPDATE_SERVER            "https://github.com"
+#define TS_UPDATE_PATH              "tsoolgee/rufus-tsoolgee-edition/releases/latest/download/"
 
 /* New checkbox, sitting on the same row as "List USB Hard Drives" */
 #define IDC_LIST_INTERNAL           1990
