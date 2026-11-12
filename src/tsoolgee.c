@@ -307,7 +307,7 @@ void TsAboutAddCredit(HWND hEdit)
 	static_sprintf(rtf, "{\\rtf1\\ansi\\line\\line\\b\\fs18 %s\\b0\\line\\fs18 %s צול גאה\\line %s\\line "
 		TS_REPO_URL "/issues}",
 		// Hebrew strings are wrapped in RLE/PDF marks, like Rufus' own RTL translations
-		TsText("‫מהדורת TSOOLGEE ערוכה - זו אינה הגרסה המקורית של Rufus‬", "TSOOLGEE edition - an edited version, not the original Rufus"),
+		TsText("‫מהדורה ערוכה - זו אינה הגרסה המקורית של התוכנה‬", "TSOOLGEE edition - an edited version, not the original Rufus"),
 		TsText("‫נערך על ידי‬", "Edited by"),
 		TsText("‫דיווח על בעיות במהדורה הזו:‬", "Report issues with this edition at:"));
 	SendMessageA(hEdit, EM_SETTEXTEX, (WPARAM)&st, (LPARAM)rtf);

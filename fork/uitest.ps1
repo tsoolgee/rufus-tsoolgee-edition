@@ -173,7 +173,7 @@ if ($d -eq [IntPtr]::Zero) { Fail "About box did not open" } else {
 	$blurb = [W]::EditText([W]::GetDlgItem($d, 1033))
 	Note "about: $($blurb -replace "`r?`n", ' / ')"
 	if (-not $blurb.Contains('צול גאה')) { Fail "About box has no credit" }
-	if (-not $blurb.Contains('TSOOLGEE')) { Fail "About box does not say it is the TSOOLGEE edition" }
+	if (-not ($blurb.Contains('TSOOLGEE') -or $blurb.Contains('מהדורה ערוכה'))) { Fail "About box does not say it is an edited version" }
 	Press $d $IDOK | Out-Null
 }
 
