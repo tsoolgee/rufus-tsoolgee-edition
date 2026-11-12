@@ -44,6 +44,7 @@
 
 #include "drive.h"
 #include "dev.h"
+#include "tsoolgee.h"
 
 extern RUFUS_DRIVE rufus_drive[MAX_DRIVES];
 extern BOOL enable_HDDs, enable_VHDs, use_fake_units, enable_vmdk, usb_debug;
@@ -589,7 +590,7 @@ BOOL GetDevices(DWORD devnum)
 	// These are the generic (non USB) storage enumerators we also test
 	const char* genstor_name[] = {
 		// Generic storage drivers (Careful now!)
-		"SCSI", // "STORAGE",	// "STORAGE" is used by 'Storage Spaces" and stuff => DANGEROUS!
+		"SCSI", "IDE", "NVME", // "STORAGE",	// "STORAGE" is used by 'Storage Spaces" and stuff => DANGEROUS!
 		// Non-USB card reader drivers - This list *MUST* start with "SD" (delimiter)
 		// See http://itdoc.hitachi.co.jp/manuals/3021/30213B5200e/DMDS0094.HTM
 		// Also  http://www.carrona.org/dvrref.php. NB: All members from this list should have
@@ -634,9 +635,11 @@ BOOL GetDevices(DWORD devnum)
 	uint32_t ignore_vid_pid[MAX_IGNORE_USB];
 	uint64_t drive_size = 0;
 	usb_device_props props;
+	BOOL ts_internal;	// TSOOLGEE: drive only listed because internal drives are enabled
 
 	IGNORE_RETVAL(ComboBox_ResetContent(hDeviceList));
 	ClearDrives();
+	TsClearInternalMarks();
 	StrArrayCreate(&dev_if_path, 128);
 	// Add a dummy for string index zero, as this is what non matching hashes will point to
 	StrArrayAdd(&dev_if_path, "", TRUE);
@@ -766,6 +769,7 @@ BOOL GetDevices(DWORD devnum)
 		memset(buffer, 0, sizeof(buffer));
 		memset(&props, 0, sizeof(props));
 		props.vid = -1; props.pid = -1;
+		ts_internal = FALSE;
 		method_str = "";
 		hub_path = NULL;
 		if (!SetupDiGetDeviceRegistryPropertyA(dev_info, &dev_info_data, SPDRP_ENUMERATOR_NAME,
@@ -946,7 +950,9 @@ BOOL GetDevices(DWORD devnum)
 		} else if ((props.is_CARD) && ((!props.is_USB) || ((props.vid == 0) && (props.pid == 0)))) {
 			uprintf("Found card reader device '%s'", buffer);
 		} else if ((!props.is_USB) && (!props.is_UASP) && (props.is_Removable)) {
-			if (!list_non_usb_removable_drives) {
+			if (TS_LIST_INTERNAL_DRIVES) {
+				ts_internal = TRUE;
+			} else if (!list_non_usb_removable_drives) {
 				uprintf("Found non-USB removable device '%s' => Eliminated", buffer);
 				uuprintf("If you *REALLY* need, you can enable listing of this device with <Ctrl><Alt><F>");
 				continue;
@@ -957,8 +963,13 @@ BOOL GetDevices(DWORD devnum)
 				if (!props.is_USB) {
 					// If we have a non removable SCSI drive and couldn't get a VID:PID,
 					// we are most likely dealing with a system drive => eliminate it!
-					uuprintf("Found non-USB non-removable device '%s' => Eliminated", buffer);
-					continue;
+					// TSOOLGEE: ...unless the user explicitly asked for internal drives.
+					if (!TS_LIST_INTERNAL_DRIVES) {
+						uuprintf("Found non-USB non-removable device '%s' => Eliminated", buffer);
+						continue;
+					}
+					ts_internal = TRUE;
+					uprintf("Found INTERNAL (non-USB) device '%s' (listed because internal drives are enabled)", buffer);
 				}
 				static_strcpy(str, "????:????");	// Couldn't figure VID:PID
 			} else {
@@ -1054,13 +1065,15 @@ BOOL GetDevices(DWORD devnum)
 
 			if (GetDriveLabel(drive_index, drive_letters, &label, FALSE)) {
 				if ((props.is_SCSI) && (!props.is_UASP) && (!props.is_VHD)) {
-					if (!props.is_Removable) {
+					if (!props.is_Removable && !TS_LIST_INTERNAL_DRIVES) {
 						// Non removables should have been eliminated above, but since we
 						// are potentially dealing with system drives, better safe than sorry
 						safe_free(devint_detail_data);
 						break;
 					}
-					if (!list_non_usb_removable_drives) {
+					if (!props.is_Removable)
+						ts_internal = TRUE;
+					if (!list_non_usb_removable_drives && !TS_LIST_INTERNAL_DRIVES) {
 						// Go over the mounted partitions and find if GetDriveType() says they are
 						// removable. If they are not removable, don't allow the drive to be listed
 						for (p = drive_letters; *p; p++) {
@@ -1075,7 +1088,7 @@ BOOL GetDevices(DWORD devnum)
 						}
 					}
 				}
-				if ((!enable_HDDs) && (!props.is_VHD) && (!props.is_CARD) &&
+				if ((!enable_HDDs) && (!props.is_VHD) && (!props.is_CARD) && !(TS_LIST_INTERNAL_DRIVES && ts_internal) &&
 					((score = IsHDD(drive_index, (uint16_t)props.vid, (uint16_t)props.pid, buffer)) > 0)) {
 					uprintf("Device eliminated because it was detected as a Hard Drive or SSD (score %d > 0)", score);
 					if (!list_non_usb_removable_drives)
@@ -1133,7 +1146,7 @@ BOOL GetDevices(DWORD devnum)
 					// If that is the case, use "Multiple Volumes" instead of the label
 					static_strcpy(display_msg, (((drive_letters[0] != 0) && (drive_letters[1] != 0))?
 						lmprintf(MSG_047):label));
-					for (k=0, remove_drive=0; drive_letters[k] && (!remove_drive); k++) {
+					for (k=0, remove_drive=0; drive_letters[k] && (!remove_drive || TS_LIST_INTERNAL_DRIVES); k++) {
 						// Append all the drive letters we detected
 						letter_name[2] = drive_letters[k];
 						if (right_to_left_mode)
@@ -1143,6 +1156,14 @@ BOOL GetDevices(DWORD devnum)
 							remove_drive = 1;
 						if (drive_letters[k] == (PathGetDriveNumberU(system_dir) + 'A'))
 							remove_drive = 2;
+					}
+					// TSOOLGEE: with internal drives enabled, the system disk and the disk Rufus runs
+					// from stay in the list - flagged, and protected by extra confirmations.
+					if (remove_drive && TS_LIST_INTERNAL_DRIVES) {
+						uprintf("WARNING: Listing the %s, because internal drives are enabled!",
+							(remove_drive == 1) ? "disk from which " APPLICATION_NAME " is running" : "system disk");
+						ts_internal = TRUE;
+						remove_drive = 0;
 					}
 					// Make sure that we don't list any drive that should not be listed
 					if (remove_drive) {
@@ -1155,6 +1176,19 @@ BOOL GetDevices(DWORD devnum)
 						"%s [%s]", (right_to_left_mode) ? RIGHT_TO_LEFT_MARK : "",
 						SizeToHumanReadable(drive_size, FALSE, use_fake_units));
 					display_name = display_msg;
+				}
+
+				// TSOOLGEE: remember and visibly flag internal drives (and the system disk)
+				if (TS_LIST_INTERNAL_DRIVES) {
+					static char ts_display_name[256];
+					const char* ts_tag;
+					if (ts_internal)
+						TsMarkInternal(drive_index);
+					ts_tag = TsDriveTag(drive_index);
+					if (ts_tag[0] != 0) {
+						static_sprintf(ts_display_name, "%s%s", ts_tag, display_name);
+						display_name = ts_display_name;
+					}
 				}
 
 				rufus_drive[num_drives].index = drive_index;

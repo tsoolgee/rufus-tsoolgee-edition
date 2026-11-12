@@ -896,6 +896,8 @@ extern int GetIssuerCertificateInfo(uint8_t* cert, cert_info_t* info);
 extern uint64_t GetSignatureTimeStamp(const char* path);
 extern LONG ValidateSignature(HWND hDlg, const char* path);
 extern BOOL ValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen);
+extern BOOL ValidateOpensslSignatureWithKey(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,
+	const uint8_t* modulus, size_t modulus_size);
 extern BOOL IsFontAvailable(const char* font_name);
 extern BOOL WriteFileWithRetry(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
 	LPDWORD lpNumberOfBytesWritten, DWORD nNumRetries);
