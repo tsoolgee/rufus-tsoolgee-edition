@@ -1,0 +1,114 @@
+Rufus x64 v4.16.2434 (Beta)
+Windows version: Windows Server 2022 Server Datacenter x64 (Build 26100.33674)
+Syslinux versions: 4.07/2013-07-25, 6.04/pre1
+Grub versions: 0.4.6a, 2.16
+System locale ID: 0x0409 (en-US)
+NOTE: No Windows Language Pack is installed for Hebrew (עברית) on this system.
+This means that some controls may still be displayed using the system locale.
+SetNDTA: Successfully set NoDriveTypeAutorun to 0x0000009E
+Localization set to 'he-IL'
+Found VHD device 'Microsoft Virtual Disk'
+Notice: Volume Device Path is \Device\HarddiskVolume4
+Waiting for access on \\?\Volume{c21b914c-0000-0000-0000-100000000000}...
+WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
+Process search thread is not started!
+Removing D: from the list: This is the disk from which Rufus is running!
+Found VHD device 'Microsoft Virtual Disk'
+Notice: Volume Device Path is \Device\HarddiskVolume3
+Waiting for access on \\?\Volume{51199064-2a58-498e-81e0-1bdfd593eced}...
+WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
+Process search thread is not started!
+Removing C: from the list: This is the system disk!
+0 devices found
+Found 5 additional UEFI revocation filters from remote SBAT
+Found 4 active Secure Boot certificate entries from remote
+Found 1 revoked Secure Boot certificate entries from remote
+CAUTION: Listing of internal (non-USB) drives enabled
+Found VHD device 'Microsoft Virtual Disk'
+Notice: Volume Device Path is \Device\HarddiskVolume4
+Waiting for access on \\?\Volume{c21b914c-0000-0000-0000-100000000000}...
+WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
+Process search thread is not started!
+WARNING: Listing the disk from which Rufus is running, because internal drives are enabled!
+Found VHD device 'Microsoft Virtual Disk'
+Notice: Volume Device Path is \Device\HarddiskVolume3
+Waiting for access on \\?\Volume{51199064-2a58-498e-81e0-1bdfd593eced}...
+WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
+Process search thread is not started!
+WARNING: Listing the system disk, because internal drives are enabled!
+2 devices found
+Disk type: FIXED, Disk size: ‎150‎ GB, Sector size: 512 bytes
+Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
+Partition type: MBR, NB Partitions: 1
+Disk ID: 0xC21B914C
+Drive has a Windows 7 Master Boot Record
+Partition 1:
+  Type: NTFS (0x07)
+  Detected File System: NTFS
+  Size: 150.0 GB (161059176448 bytes)
+  Start Sector: 2048, Boot: No
+Checking for UEFI DBX updates...
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_ia32.efiauth2&page=1&per_page=1 for DBX update timestamp
+DBX update timestamp is 1788300339
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_x64.efiauth2&page=1&per_page=1 for DBX update timestamp
+DBX update timestamp is 1788300339
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_arm.efiauth2&page=1&per_page=1 for DBX update timestamp
+DBX update timestamp is 1788300339
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_aarch64.efiauth2&page=1&per_page=1 for DBX update timestamp
+DBX update timestamp is 1788300339
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_ia64.efiauth2&page=1&per_page=1 for DBX update timestamp
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_riscv64.efiauth2&page=1&per_page=1 for DBX update timestamp
+2 devices found
+Disk type: FIXED, Disk size: ‎150‎ GB, Sector size: 512 bytes
+Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
+Partition type: GPT, NB Partitions: 3
+Disk GUID: {86B1C54D-DD85-4A44-B3A0-67D9927A58ED}
+Max parts: 128, Start Offset: 17408, Usable = 161061239296 bytes
+Partition 1:
+  Type: Microsoft reserved
+  Name: 'Basic data partition'
+  Detected File System: (Unrecognized)
+  ID: {2D0E950B-7A57-48CF-A6B4-E9697B14B05B}
+  Size: 16 MB (16777216 bytes)
+  Start Sector: 2048, Attributes: 0xC000000000000000
+Partition 2:
+  Type: EFI system partition
+  Name: 'Basic data partition'
+  Detected File System: FAT32
+  ID: {6D84BA53-20F7-4FEF-96F3-C0DC74740DBB}
+  Size: 99 MB (103809024 bytes)
+  Start Sector: 34816, Attributes: 0x0000000000000000
+Partition 3:
+  Type: Microsoft basic data
+  Name: 'Basic data partition'
+  Detected File System: NTFS
+  ID: {51199064-2A58-498E-81E0-1BDFD593ECED}
+  Size: 149.9 GB (160939621888 bytes)
+  Start Sector: 237568, Attributes: 0x0000000000000000
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_loongarch64.efiauth2&page=1&per_page=1 for DBX update timestamp
+Checking for Rufus updates...
+Using https://raw.githubusercontent.com/tsoolgee/rufus-tsoolgee-edition/update-info/ for the update check
+Checking release channel...
+Base update check: tsoolgee/rufus-tsoolgee-edition/update-info/Rufus_win_x64_11.0.ver
+Could not find a release version file on server https://raw.githubusercontent.com
+Updates: Unable to access version data
+WARNING: The following application(s) or service(s) are accessing the drive:
+● [616] C:\Windows\winsxs\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.33634_none_555e2c746f017001\TiWorker.exe -Embedding (rwx)
+● [980] C:\Windows\system32\lsass.exe (rwx)
+● [740] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
+● [712] "fontdrvhost.exe" (x)
+● [1080] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
+● [1128] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
+● [1304] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
+● [1336] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
+● [1468] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
+● [1500] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
+● [1568] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
+● [1576] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
+● [1588] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
+● [1624] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
+● [1644] C:\Windows\system32\svchost.exe -k LocalServiceNetworkRestricted -p -s vmictimesync (rx)
+● [1716] C:\Windows\System32\svchost.exe -k netprofm -p -s netprofm (rx)
+You should close these applications before retrying the operation.
+TSOOLGEE: target is the SYSTEM disk an internal drive - asking for extra confirmation
+
