@@ -109,6 +109,14 @@ jobs:
       with:
         install-only: true
 
+    - name: File details say it is the TSOOLGEE edition
+      # Done at build time: these lines sit next to the version number, which changes every release
+      shell: bash
+      run: |
+        sed -b -i 's|VALUE "FileDescription", "Rufus"|VALUE "FileDescription", "Rufus - TSOOLGEE edition (not the original Rufus)"|' ./src/rufus.rc
+        sed -b -i 's|VALUE "Comments", "https://rufus.ie"|VALUE "Comments", "Edited version of Rufus (https://rufus.ie) by tsoolgee - https://github.com/${{ github.repository }}"|' ./src/rufus.rc
+        grep -c "TSOOLGEE edition" ./src/rufus.rc
+
     - name: Set BETA
       id: set_beta
       if: ${{ matrix.beta }}

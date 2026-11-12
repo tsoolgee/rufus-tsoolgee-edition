@@ -426,9 +426,9 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "Comments", "Edited version of Rufus (https://rufus.ie) - https://github.com/tsoolgee/rufus-tsoolgee-edition"
+            VALUE "Comments", "https://rufus.ie"
             VALUE "CompanyName", "Akeo Consulting"
-            VALUE "FileDescription", "Rufus - TSOOLGEE edition (not the original Rufus)"
+            VALUE "FileDescription", "Rufus"
             VALUE "FileVersion", "4.16.2442"
             VALUE "InternalName", "Rufus"
             VALUE "LegalCopyright", "© 2011-2026 Pete Batard (GPL v3)"
