@@ -179,7 +179,7 @@ jobs:
         $ok = $true
         foreach ($l in 'en-US', 'he-IL') {
           & ./fork/uitest.ps1 -Exe (Resolve-Path run/rufus.exe) -OutDir shots/${{ matrix.tag }} -Locale $l
-          if ($LASTEXITCODE -ne 0) { $ok = $false }
+          if ($LASTEXITCODE -ne 0) { $ok = $false; Write-Host "::error::UI test failed for $l (exit code $LASTEXITCODE)" }
         }
         if (-not $ok) { exit 1 }
     - name: Upload screenshots

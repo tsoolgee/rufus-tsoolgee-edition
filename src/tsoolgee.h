@@ -39,7 +39,7 @@
 /* Credit: this is an edited version of Rufus, by tsoolgee */
 #define TS_CREDIT_URL               "https://tsoolgee.uk"
 #define TS_CREDIT_NAME_W            L"צול גאה"
-#define TS_TITLE_SUFFIX             " - TSOOLGEE edition"
+#define TS_TITLE_SUFFIX             "- TSOOLGEE edition"	// IsAlphaOrBeta() ends with a space
 
 /* Internal (non USB) drives are only listed when the user explicitly enabled them */
 extern BOOL enable_internal_drives;

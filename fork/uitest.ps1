@@ -256,3 +256,4 @@ if ($log -match 'Version signature is valid') { Note "update signature valid" }
 Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
 if ($failures.Count -gt 0) { Write-Host "[$Locale] $($failures.Count) failure(s)"; exit 1 }
 Note "all checks passed"
+exit 0

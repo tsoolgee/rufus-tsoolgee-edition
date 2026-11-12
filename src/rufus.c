@@ -2137,7 +2137,7 @@ static void InitDialog(HWND hDlg)
 
 	// Redefine the title to be able to add "Alpha" or "Beta"
 	static_sprintf(tmp, APPLICATION_NAME " %d.%d.%d%s%s" TS_TITLE_SUFFIX, rufus_version[0], rufus_version[1], rufus_version[2],
-		IsAlphaOrBeta(), (ini_file != NULL)?"(Portable)":"");
+		IsAlphaOrBeta(), (ini_file != NULL)?"(Portable) ":"");
 	SetWindowTextU(hDlg, tmp);
 	// Now that we have a title, we can find the handle of our Dialog
 	dialog_handle = FindWindowA(NULL, tmp);
