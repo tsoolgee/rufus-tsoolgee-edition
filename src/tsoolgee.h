@@ -1,5 +1,5 @@
 /*
- * Rufus TSOOLGEE edition - additions on top of Rufus
+ * Rufus tsoolgee edition - additions on top of Rufus
  * Copyright © 2026 tsoolgee
  *
  * Based on Rufus: The Reliable USB Formatting Utility
@@ -24,7 +24,7 @@
 
 #pragma once
 
-#define TS_EDITION_NAME             "TSOOLGEE"
+#define TS_EDITION_NAME             "tsoolgee"
 #define TS_REPO_URL                 "https://github.com/tsoolgee/rufus-tsoolgee-edition"
 
 /*
@@ -42,7 +42,7 @@
 /* Credit: this is an edited version of Rufus, by tsoolgee */
 #define TS_CREDIT_URL               "https://tsoolgee.uk"
 #define TS_CREDIT_NAME_W            L"צול גאה"
-#define TS_TITLE_SUFFIX             "- TSOOLGEE edition"	// IsAlphaOrBeta() ends with a space
+#define TS_TITLE_SUFFIX             "- tsoolgee edition"	// IsAlphaOrBeta() ends with a space
 
 /* Internal (non USB) drives are only listed when the user explicitly enabled them */
 extern BOOL enable_internal_drives;
@@ -68,6 +68,6 @@ void TsAboutAddCredit(HWND hEdit);
 void TsTranslateAboutLink(wchar_t* link, size_t link_size);
 BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name);
 
-/* Signatures: upstream files are signed with the upstream key, TSOOLGEE update files with ours */
+/* Signatures: upstream files are signed with the upstream key, tsoolgee update files with ours */
 BOOL TsValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,
 	const uint8_t* upstream_modulus, size_t upstream_modulus_size);

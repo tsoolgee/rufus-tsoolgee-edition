@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Rufus TSOOLGEE - re-apply the TSOOLGEE changes on top of an upstream Rufus tag.
+# Rufus tsoolgee - re-apply the tsoolgee changes on top of an upstream Rufus tag.
 #
 #   fork/generate.sh <upstream-tag> [source-commit]
 #
 # Needs the upstream tags under refs/upstream-tags/* :
 #   git fetch --no-tags https://github.com/pbatard/rufus.git '+refs/tags/*:refs/upstream-tags/*'
 #
-# The TSOOLGEE changes are whatever the source commit (default: HEAD, i.e. the 'tsoolgee'
+# The tsoolgee changes are whatever the source commit (default: HEAD, i.e. the 'tsoolgee'
 # branch) changed compared to the upstream tag it is based on (fork/BASE). They are
 # cherry-picked onto <upstream-tag> (3-way merge, line-ending changes ignored - upstream
 # switches files between CRLF and LF from time to time). The fork's own files (fork/, our
@@ -26,9 +26,9 @@ EMAIL=291792265+tsoolgee@users.noreply.github.com
 git rev-parse -q --verify "refs/upstream-tags/$TAG^{commit}" >/dev/null || { echo "::error::Unknown upstream tag $TAG"; exit 1; }
 git rev-parse -q --verify "refs/upstream-tags/$BASE^{commit}" >/dev/null || { echo "::error::Unknown base tag $BASE"; exit 1; }
 
-echo "Applying TSOOLGEE changes ($BASE -> ${SRC:0:12}) onto upstream $TAG"
-# A single commit holding all the TSOOLGEE changes, on top of the base tag
-SYN=$(git -c user.name=$NAME -c user.email=$EMAIL commit-tree "$SRC^{tree}" -p "refs/upstream-tags/$BASE^{commit}" -m "TSOOLGEE changes")
+echo "Applying tsoolgee changes ($BASE -> ${SRC:0:12}) onto upstream $TAG"
+# A single commit holding all the tsoolgee changes, on top of the base tag
+SYN=$(git -c user.name=$NAME -c user.email=$EMAIL commit-tree "$SRC^{tree}" -p "refs/upstream-tags/$BASE^{commit}" -m "tsoolgee changes")
 
 git checkout -q --detach "refs/upstream-tags/$TAG"
 git -c user.name=$NAME -c user.email=$EMAIL -c merge.conflictstyle=merge \
@@ -48,7 +48,7 @@ git add fork/BASE
 
 CONFLICTS=$(git diff --name-only --diff-filter=U)
 if [ -n "$CONFLICTS" ]; then
-	echo "::error::The TSOOLGEE changes do not apply cleanly on upstream $TAG - manual update needed in:"
+	echo "::error::The tsoolgee changes do not apply cleanly on upstream $TAG - manual update needed in:"
 	echo "$CONFLICTS"
 	git diff --diff-filter=U | head -200
 	exit 1
@@ -58,6 +58,6 @@ if git grep -n -E '^(<<<<<<<|>>>>>>>) ' -- src res >/dev/null; then
 fi
 
 git -c user.name=$NAME -c user.email=$EMAIL \
-	commit -q -m "Rufus TSOOLGEE ${TAG#v}" -m "TSOOLGEE changes re-applied on top of upstream Rufus $TAG."
+	commit -q -m "Rufus tsoolgee ${TAG#v}" -m "tsoolgee changes re-applied on top of upstream Rufus $TAG."
 git tag -f "$TAG" >/dev/null
 echo "Generated $(git rev-parse --short HEAD) for $TAG"

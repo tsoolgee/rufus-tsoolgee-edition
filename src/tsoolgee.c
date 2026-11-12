@@ -1,5 +1,5 @@
 /*
- * Rufus TSOOLGEE edition - additions on top of Rufus
+ * Rufus tsoolgee edition - additions on top of Rufus
  * Copyright © 2026 tsoolgee
  *
  * Based on Rufus: The Reliable USB Formatting Utility
@@ -46,7 +46,7 @@ extern loc_cmd* selected_locale;
 BOOL enable_internal_drives = FALSE;
 
 /*
- * The RSA public key modulus of the key that signs the TSOOLGEE update files
+ * The RSA public key modulus of the key that signs the tsoolgee update files
  * (Rufus_win.ver and the release executables). Same layout as the upstream one in pki.c:
  * openssl modulus, including the leading 0x00 sign byte.
  */
@@ -254,7 +254,7 @@ static void TsCreateCreditButton(HWND hDlg)
 	if ((hHdr == NULL) || (hRef == NULL) || (GetDlgItem(hDlg, IDC_TS_CREDIT) != NULL))
 		return;
 	wtext = utf8_to_wchar(TsText("נערך ע״י צול גאה ↗", "Edited by צול גאה ↗"));
-	hBtn = CreateWindowExW(0, L"BUTTON", (wtext != NULL) ? wtext : L"TSOOLGEE",
+	hBtn = CreateWindowExW(0, L"BUTTON", (wtext != NULL) ? wtext : L"tsoolgee",
 		WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 0, 0, 10, 10, hDlg,
 		(HMENU)(UINT_PTR)IDC_TS_CREDIT, GetModuleHandle(NULL), NULL);
 	free(wtext);
@@ -307,7 +307,7 @@ void TsAboutAddCredit(HWND hEdit)
 	static_sprintf(rtf, "{\\rtf1\\ansi\\line\\line\\b\\fs18 %s\\b0\\line\\fs18 %s צול גאה\\line %s\\line "
 		TS_REPO_URL "/issues}",
 		// Hebrew strings are wrapped in RLE/PDF marks, like Rufus' own RTL translations
-		TsText("‫מהדורה ערוכה - זו אינה הגרסה המקורית של התוכנה‬", "TSOOLGEE edition - an edited version, not the original Rufus"),
+		TsText("‫מהדורה ערוכה ולא הגרסה המקורית של התוכנה‬", "tsoolgee edition - an edited version, not the original Rufus"),
 		TsText("‫נערך על ידי‬", "Edited by"),
 		TsText("‫דיווח על בעיות במהדורה הזו:‬", "Report issues with this edition at:"));
 	SendMessageA(hEdit, EM_SETTEXTEX, (WPARAM)&st, (LPARAM)rtf);
@@ -397,7 +397,7 @@ BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name)
 
 	if (!is_system && !is_app && !is_internal)
 		return TRUE;
-	uprintf("TSOOLGEE: target is %s%s%s- asking for extra confirmation", is_system ? "the SYSTEM disk " : "",
+	uprintf("tsoolgee: target is %s%s%s- asking for extra confirmation", is_system ? "the SYSTEM disk " : "",
 		is_app ? "the disk Rufus runs from " : "", is_internal ? "an internal drive " : "");
 
 	if (is_internal || is_app) {
@@ -435,14 +435,14 @@ BOOL TsConfirmTargetDrive(HWND hDlg, DWORD DriveIndex, const char* drive_name)
 			TsText("אישור אחרון - דיסק המערכת", "Last confirmation - System disk"),
 			MB_YESNO | MB_ICONERROR | MB_DEFBUTTON2 | MB_IS_RTL, selected_langid) != IDYES)
 			return FALSE;
-		uprintf("TSOOLGEE: user confirmed writing to the SYSTEM disk!");
+		uprintf("tsoolgee: user confirmed writing to the SYSTEM disk!");
 	}
 	return TRUE;
 }
 
 /*
  * Accept a file signed with the upstream key (DBX, GRUB, Syslinux, Fido... from rufus.ie) or with
- * the TSOOLGEE key (the update files and executables of this edition). The validator wipes the
+ * the tsoolgee key (the update files and executables of this edition). The validator wipes the
  * buffer when a signature does not match, so the first attempt is made on a copy.
  */
 BOOL TsValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,

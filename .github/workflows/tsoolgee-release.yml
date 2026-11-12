@@ -1,7 +1,7 @@
-# Rufus TSOOLGEE - follow upstream Rufus releases automatically.
+# Rufus tsoolgee - follow upstream Rufus releases automatically.
 #
-# Every 6 hours: for each upstream release (>= fork/MIN_VERSION) that has no TSOOLGEE release yet,
-# re-apply the TSOOLGEE changes on top of it (fork/generate.sh), build it, smoke-test the UI,
+# Every 6 hours: for each upstream release (>= fork/MIN_VERSION) that has no tsoolgee release yet,
+# re-apply the tsoolgee changes on top of it (fork/generate.sh), build it, smoke-test the UI,
 # sign it, publish a release with the very same tag/version, and update the signed update files
 # as assets of the latest stable release, where the application checks for updates.
 #
@@ -9,7 +9,7 @@
 #                             and creates the releases under the owner's name
 #          UPDATE_SIGNING_KEY PEM RSA private key matching the public key in src/tsoolgee.c
 
-name: TSOOLGEE sync & release
+name: tsoolgee sync & release
 
 on:
   schedule:
@@ -52,13 +52,13 @@ jobs:
     - name: Fetch upstream tags
       run: git fetch --no-tags https://github.com/pbatard/rufus.git '+refs/tags/*:refs/upstream-tags/*'
 
-    - name: Find upstream releases without a TSOOLGEE release
+    - name: Find upstream releases without a tsoolgee release
       id: plan
       env:
         FORCE_TAG: ${{ inputs.tag }}
       run: python3 fork/tsoolgee.py plan
 
-    - name: Re-apply the TSOOLGEE changes and push the tags
+    - name: Re-apply the tsoolgee changes and push the tags
       if: steps.plan.outputs.count != '0'
       run: |
         SRC=$(git rev-parse HEAD)
@@ -82,7 +82,7 @@ jobs:
       run: |
         gh issue create --repo "${{ github.repository }}" \
           --title "Automatic sync with upstream failed ($(date -u +%Y-%m-%d))" \
-          --body "The TSOOLGEE changes could not be re-applied on a new upstream Rufus release. See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          --body "The tsoolgee changes could not be re-applied on a new upstream Rufus release. See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
 
   build:
     needs: plan
@@ -109,13 +109,13 @@ jobs:
       with:
         install-only: true
 
-    - name: File details say it is the TSOOLGEE edition
+    - name: File details say it is the tsoolgee edition
       # Done at build time: these lines sit next to the version number, which changes every release
       shell: bash
       run: |
-        sed -b -i 's|VALUE "FileDescription", "Rufus"|VALUE "FileDescription", "Rufus - TSOOLGEE edition (not the original Rufus)"|' ./src/rufus.rc
+        sed -b -i 's|VALUE "FileDescription", "Rufus"|VALUE "FileDescription", "Rufus - tsoolgee edition (not the original Rufus)"|' ./src/rufus.rc
         sed -b -i 's|VALUE "Comments", "https://rufus.ie"|VALUE "Comments", "Edited version of Rufus (https://rufus.ie) by tsoolgee - https://github.com/${{ github.repository }}"|' ./src/rufus.rc
-        grep -c "TSOOLGEE edition" ./src/rufus.rc
+        grep -c "tsoolgee edition" ./src/rufus.rc
 
     - name: Set BETA
       id: set_beta
@@ -253,7 +253,7 @@ jobs:
         if not pre:
             rows += [('rufus-%sp.exe' % v, 'נייד (Portable)'), ('rufus-%s_x86.exe' % v, '32 ביט'), ('rufus-%s_arm64.exe' % v, 'ARM64')]
         files = '| קובץ | |\n|---|---|\n' + '\n'.join('| `%s` | %s |' % r for r in rows)
-        notes = f"""**Rufus {v} — מהדורת TSOOLGEE** · גרסה ערוכה, לא Rufus המקורי · נערך על ידי [צול גאה](https://tsoolgee.uk)
+        notes = f"""**Rufus {v} — מהדורת tsoolgee** · גרסה ערוכה, לא Rufus המקורי · נערך על ידי [צול גאה](https://tsoolgee.uk)
         {beta}
         הגרסה נבנתה אוטומטית מ-[Rufus {v} המקורי]({url}) של Pete Batard, והשינויים של המהדורה הוחלו עליה מחדש:
 
@@ -279,9 +279,9 @@ jobs:
           if [ "$T" = "$NEWEST_STABLE" ]; then FLAGS="$FLAGS --latest"; else FLAGS="$FLAGS --latest=false"; fi
           if gh release view "$T" >/dev/null 2>&1; then
             gh release upload "$T" "$D"/* --clobber
-            gh release edit "$T" --title "Rufus $V – TSOOLGEE edition" --notes-file notes.md $FLAGS
+            gh release edit "$T" --title "Rufus $V – tsoolgee edition" --notes-file notes.md $FLAGS
           else
-            gh release create "$T" "$D"/* --verify-tag --title "Rufus $V – TSOOLGEE edition" --notes-file notes.md $FLAGS
+            gh release create "$T" "$D"/* --verify-tag --title "Rufus $V – tsoolgee edition" --notes-file notes.md $FLAGS
           fi
 
           # Update files: stable channel for the newest stable, beta channel for a newer BETA

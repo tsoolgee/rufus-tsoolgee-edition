@@ -1,4 +1,4 @@
-# Rufus TSOOLGEE - UI smoke test, run on a (disposable) GitHub Windows runner.
+# Rufus tsoolgee - UI smoke test, run on a (disposable) GitHub Windows runner.
 #
 #   fork/uitest.ps1 -Exe rufus.exe -OutDir shots -Locale en-US [-RequireUpdateSignature]
 #
@@ -122,7 +122,7 @@ $expected = if ($he) { 'כוננים פנימיים' } else { 'Internal drives' 
 if (-not ([W]::Text($hInt)).Contains($expected)) { Fail "Unexpected checkbox text '$([W]::Text($hInt))'" }
 
 # --- 1b. Edited-version credit: title, button
-if (-not ([W]::Text($main)).Contains('TSOOLGEE edition')) { Fail "Window title does not say 'TSOOLGEE edition'" }
+if (-not ([W]::Text($main)).Contains('tsoolgee edition')) { Fail "Window title does not say 'tsoolgee edition'" }
 $hCredit = [W]::GetDlgItem($main, $IDC_TS_CREDIT)
 if ($hCredit -eq [IntPtr]::Zero -or -not [W]::IsWindowVisible($hCredit)) { Fail "Credit button not found / not visible" } else {
 	$rc = New-Object W+RECT; [W]::GetWindowRect($hCredit, [ref]$rc) | Out-Null
@@ -173,7 +173,7 @@ if ($d -eq [IntPtr]::Zero) { Fail "About box did not open" } else {
 	$blurb = [W]::EditText([W]::GetDlgItem($d, 1033))
 	Note "about: $($blurb -replace "`r?`n", ' / ')"
 	if (-not $blurb.Contains('צול גאה')) { Fail "About box has no credit" }
-	if (-not ($blurb.Contains('TSOOLGEE') -or $blurb.Contains('מהדורה ערוכה'))) { Fail "About box does not say it is an edited version" }
+	if (-not ($blurb.Contains('tsoolgee') -or $blurb.Contains('מהדורה ערוכה'))) { Fail "About box does not say it is an edited version" }
 	Press $d $IDOK | Out-Null
 }
 
