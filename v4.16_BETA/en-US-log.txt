@@ -8,7 +8,7 @@ SetNDTA: Successfully set NoDriveTypeAutorun to 0x0000009E
 Localization set to 'en-US'
 Found VHD device 'Microsoft Virtual Disk'
 Notice: Volume Device Path is \Device\HarddiskVolume4
-Waiting for access on \\?\Volume{c21b914c-0000-0000-0000-100000000000}...
+Waiting for access on \\?\Volume{56c91823-0000-0000-0000-100000000000}...
 WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
 Process search thread is not started!
 Removing D: from the list: This is the disk from which Rufus is running!
@@ -25,7 +25,7 @@ Found 1 revoked Secure Boot certificate entries from remote
 CAUTION: Listing of internal (non-USB) drives enabled
 Found VHD device 'Microsoft Virtual Disk'
 Notice: Volume Device Path is \Device\HarddiskVolume4
-Waiting for access on \\?\Volume{c21b914c-0000-0000-0000-100000000000}...
+Waiting for access on \\?\Volume{56c91823-0000-0000-0000-100000000000}...
 WARNING: Could not obtain exclusive rights. Retrying with write sharing enabled...
 Process search thread is not started!
 WARNING: Listing the disk from which Rufus is running, because internal drives are enabled!
@@ -39,7 +39,7 @@ WARNING: Listing the system disk, because internal drives are enabled!
 Disk type: FIXED, Disk size: 150 GB, Sector size: 512 bytes
 Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
 Partition type: MBR, NB Partitions: 1
-Disk ID: 0xC21B914C
+Disk ID: 0x56C91823
 Drive has a Windows 7 Master Boot Record
 Partition 1:
   Type: NTFS (0x07)
@@ -54,6 +54,9 @@ DBX update timestamp is 1788300339
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_arm.efiauth2&page=1&per_page=1 for DBX update timestamp
 DBX update timestamp is 1788300339
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_aarch64.efiauth2&page=1&per_page=1 for DBX update timestamp
+DBX update timestamp is 1788300339
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_ia64.efiauth2&page=1&per_page=1 for DBX update timestamp
+Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_riscv64.efiauth2&page=1&per_page=1 for DBX update timestamp
 2 devices found
 Disk type: FIXED, Disk size: 150 GB, Sector size: 512 bytes
 Cylinders: 19581, Tracks per cylinder: 255, Sectors per track: 63
@@ -81,33 +84,30 @@ Partition 3:
   ID: {51199064-2A58-498E-81E0-1BDFD593ECED}
   Size: 149.9 GB (160939621888 bytes)
   Start Sector: 237568, Attributes: 0x0000000000000000
-DBX update timestamp is 1788300339
-Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_ia64.efiauth2&page=1&per_page=1 for DBX update timestamp
-Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_riscv64.efiauth2&page=1&per_page=1 for DBX update timestamp
 Querying https://api.github.com/repos/microsoft/secureboot_objects/commits?path=PostSignedObjects%2FSignedByKEK2023%2Fdbx_loongarch64.efiauth2&page=1&per_page=1 for DBX update timestamp
 Checking for Rufus updates...
-Using https://raw.githubusercontent.com/tsoolgee/rufus-tsoolgee-edition/update-info/ for the update check
+Using https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest/download/ for the update check
 Checking release channel...
-Base update check: tsoolgee/rufus-tsoolgee-edition/update-info/Rufus_win_x64_11.0.ver
-Could not find a release version file on server https://raw.githubusercontent.com
+Base update check: tsoolgee/rufus-tsoolgee-edition/releases/latest/download/Rufus_win_x64_11.0.ver
+Could not find a release version file on server https://github.com
 Updates: Unable to access version data
 WARNING: The following application(s) or service(s) are accessing the drive:
-● [616] C:\Windows\winsxs\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.33634_none_555e2c746f017001\TiWorker.exe -Embedding (rwx)
-● [980] C:\Windows\system32\lsass.exe (rwx)
-● [740] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
-● [712] "fontdrvhost.exe" (x)
-● [1080] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
+● [9784] C:\Windows\system32\svchost.exe -k ClipboardSvcGroup -p -s cbdhsvc (rx)
+● [984] C:\Windows\system32\lsass.exe (rwx)
+● [808] C:\Windows\system32\svchost.exe -k DcomLaunch -p (rx)
+● [616] "fontdrvhost.exe" (x)
+● [1076] C:\Windows\system32\svchost.exe -k RPCSS -p (rx)
 ● [1128] C:\Windows\system32\svchost.exe -k DcomLaunch -p -s LSM (rx)
-● [1304] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
-● [1312] C:\Windows\System32\svchost.exe -k netsvcs -p -s NetSetupSvc (rx)
-● [1336] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
-● [1468] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
+● [1288] C:\Windows\System32\svchost.exe -k netsvcs -p -s NetSetupSvc (rx)
+● [1296] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestricted -p -s HvHost (rx)
+● [1316] C:\Windows\System32\svchost.exe -k termsvcs -s TermService (rx)
+● [1460] C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p -s NcbService (rx)
 ● [1500] C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts (rx)
-● [1568] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
 ● [1576] C:\Windows\system32\svchost.exe -k ICService -p -s vmicheartbeat (rx)
-● [1588] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
-● [1624] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
-● [1644] C:\Windows\system32\svchost.exe -k LocalServiceNetworkRestricted -p -s vmictimesync (rx)
+● [1584] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmickvpexchange (rx)
+● [1592] C:\Windows\system32\svchost.exe -k LocalSystemNetworkRestrictedRedirectionGuard -p -s vmicshutdown (rx)
+● [1644] C:\Windows\system32\svchost.exe -k LocalService -p -s nsi (rx)
+● [1668] C:\Windows\system32\svchost.exe -k LocalServiceNetworkRestricted -p -s vmictimesync (rx)
 You should close these applications before retrying the operation.
 TSOOLGEE: target is the SYSTEM disk an internal drive - asking for extra confirmation
 
