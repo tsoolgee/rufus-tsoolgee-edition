@@ -30,6 +30,7 @@
 #include <assert.h>
 
 #include "rufus.h"
+#include "tsoolgee.h"
 #include "resource.h"
 #include "msapi_utf8.h"
 #include "localization.h"
@@ -823,7 +824,15 @@ LONG ValidateSignature(HWND hDlg, const char* path)
 
 // Why-oh-why am I the only one on github doing this openssl vs MS signature validation?!?
 // For once, I'd like to find code samples from *OTHER PEOPLE* who went through this ordeal first...
+// TSOOLGEE: files signed with either the upstream key or the TSOOLGEE key are accepted (see tsoolgee.c)
 BOOL ValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen)
+{
+	return TsValidateOpensslSignature(pbBuffer, dwBufferLen, pbSignature, dwSigLen,
+		rsa_pubkey_modulus, sizeof(rsa_pubkey_modulus));
+}
+
+BOOL ValidateOpensslSignatureWithKey(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignature, DWORD dwSigLen,
+	const uint8_t* modulus, size_t modulus_size)
 {
 	HCRYPTPROV hProv = 0;
 	HCRYPTHASH hHash = 0;
@@ -852,9 +861,10 @@ BOOL ValidateOpensslSignature(BYTE* pbBuffer, DWORD dwBufferLen, BYTE* pbSignatu
 	}
 
 	// Reverse the modulus bytes from openssl (and also remove the extra unwanted 0x00)
-	assert(sizeof(rsa_pubkey_modulus) >= sizeof(pbMyPubKey.Modulus));
+	if (modulus_size < sizeof(pbMyPubKey.Modulus))
+		return FALSE;
 	for (i = 0; i < sizeof(pbMyPubKey.Modulus); i++)
-		pbMyPubKey.Modulus[i] = rsa_pubkey_modulus[sizeof(rsa_pubkey_modulus) -1 - i];
+		pbMyPubKey.Modulus[i] = modulus[modulus_size - 1 - i];
 
 	// Import our RSA public key so that the MS API can use it
 	r = CryptImportKey(hProv, (BYTE*)&pbMyPubKey.BlobHeader, dwMyPubKeyLen, 0, 0, &hPubKey);

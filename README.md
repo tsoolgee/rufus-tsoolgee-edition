@@ -1,65 +1,98 @@
-Rufus: The Reliable USB Formatting Utility
-==========================================
+<div dir="rtl">
 
-[![VS2022 Build Status](https://img.shields.io/github/actions/workflow/status/pbatard/rufus/vs2026.yml?branch=master&style=flat-square&label=VS2026%20Build)](https://github.com/pbatard/rufus/actions/workflows/vs2026.yml)
-[![MinGW Build Status](https://img.shields.io/github/actions/workflow/status/pbatard/rufus/mingw.yml?branch=master&style=flat-square&label=MinGW%20Build)](https://github.com/pbatard/rufus/actions/workflows/mingw.yml)
-[![Coverity Scan Status](https://img.shields.io/coverity/scan/2172.svg?style=flat-square&label=Coverity%20Analysis)](https://scan.coverity.com/projects/pbatard-rufus)  
-[![Latest Release](https://img.shields.io/github/release-pre/pbatard/rufus.svg?style=flat-square&label=Latest%20Release)](https://github.com/pbatard/rufus/releases)
-[![Licence](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square&label=License)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![Download Stats](https://img.shields.io/github/downloads/pbatard/rufus/total.svg?label=Downloads&style=flat-square)](https://github.com/pbatard/rufus/releases)
-[![Contributors](https://img.shields.io/github/contributors/pbatard/rufus.svg?style=flat-square&label=Contributors)](https://github.com/pbatard/rufus/graphs/contributors)
+# Rufus – מהדורת tsoolgee (גרסה ערוכה, לא המקורית)
 
-![Rufus logo](https://raw.githubusercontent.com/pbatard/rufus/master/res/icons/rufus-128.png)
+[![הורדה](https://img.shields.io/github/v/release/tsoolgee/rufus-tsoolgee-edition?label=%D7%94%D7%95%D7%A8%D7%93%D7%94&style=flat-square)](https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest)
+[![רישיון](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](LICENSE.txt)
 
-Rufus is a utility that helps format and create bootable USB flash drives.
+זוהי **גרסה ערוכה** של [**Rufus**](https://github.com/pbatard/rufus) – הכלי של Pete Batard ליצירת דיסק און קי לאתחול – ש[**צול גאה**](https://tsoolgee.uk) ערך.
+**זו אינה הגרסה המקורית של Rufus.** היא זהה למקור בכל דבר, ומוסיפה לו **אפשרות לצרוב גם לכוננים הפנימיים של המחשב**, יחד עם **אזהרות נוספות** שנועדו למנוע מחיקה של הכונן הלא נכון.
 
-Features
---------
+**[⬇ להורדת הגרסה האחרונה](https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest)**
 
-* Format USB, flash card and virtual drives to FAT/FAT32/NTFS/UDF/exFAT/ReFS/ext2/ext3
-* Create DOS bootable USB drives using [FreeDOS](https://www.freedos.org) or MS-DOS
-* Create BIOS or UEFI bootable drives, including [UEFI bootable NTFS](https://github.com/pbatard/uefi-ntfs)
-* Create bootable drives from bootable ISOs (Windows, Linux, etc.)
-* Create bootable drives from bootable disk images, including compressed ones
-* Create Windows 11 installation drives for PCs that don't have TPM or Secure Boot
-* Create [Windows To Go](https://en.wikipedia.org/wiki/Windows_To_Go) drives
-* Create VHD/DD, VHDX and FFU images of an existing drive
-* Create persistent Linux partitions
-* Compute MD5, SHA-1, SHA-256 and SHA-512 checksums of the selected image
-* Perform runtime validation of UEFI bootable media
-* Improve Windows installation experience by automatically setting up OOBE parameters (local account, privacy options, etc.)
-* Perform bad blocks checks, including detection of "fake" flash drives
-* Download official Microsoft Windows 8, Windows 10 or Windows 11 retail ISOs
-* Download [UEFI Shell](https://github.com/pbatard/UEFI-Shell) ISOs
-* Modern and familiar UI, with [38 languages natively supported](https://github.com/pbatard/rufus/wiki/FAQ#What_languages_are_natively_supported_by_Rufus)
-* Small footprint. No installation required.
-* Portable. Secure Boot compatible.
-* 100% [Free Software](https://www.gnu.org/philosophy/free-sw) ([GPL v3](https://www.gnu.org/licenses/gpl-3.0))
+---
 
-Compilation
------------
+> [!CAUTION]
+> ## ⚠️ אזהרה: כוננים פנימיים
+>
+> **צריבה לכונן פנימי מוחקת את כל מה שיש עליו:** קבצים, תוכנות, ואם זה דיסק המערכת – גם את Windows עצמו. המחשב עלול לא לעלות יותר.
+>
+> * כוננים פנימיים **לא מוצגים** כברירת מחדל, בדיוק כמו במקור. הם מופיעים רק אחרי שמסמנים במפורש את התיבה **"כוננים פנימיים (!)"** ומאשרים את האזהרה.
+> * הסימון **לא נשמר**. בכל הפעלה של התוכנה הוא כבוי מחדש.
+> * כל כונן פנימי מסומן ברשימה ב-**`[פנימי]`**, והדיסק שממנו Windows פועל מסומן ב-**`[!! דיסק המערכת !!]`**.
+> * לפני צריבה לכונן פנימי מופיעה אזהרה נוספת. לפני צריבה **לדיסק המערכת** מופיעות **שתי** אזהרות נוספות, ובכל אחת מהן ברירת המחדל היא "לא".
+> * לפני שלוחצים "התחל", **בדקו את האות, השם והנפח של הכונן שנבחר**. אם יש ספק, אל תמשיכו.
+>
+> השימוש באפשרות הזו הוא באחריותכם בלבד.
 
-Use either Visual Studio 2026 or MinGW and then invoke the `.sln` or `configure`/`make` respectively.
+---
 
-#### Visual Studio
+## מה שונה מהמקור
 
-Rufus is an OSI compliant Open Source project. You are entitled to
-download and use the *freely available* [Visual Studio Community Edition](https://www.visualstudio.com/vs/community/)
-to build, run or develop for Rufus. As per the Visual Studio Community Edition license,
-this applies regardless of whether you are an individual or a corporate user.
+| | Rufus המקורי | מהדורת tsoolgee |
+|---|---|---|
+| כונני USB, כרטיסי זיכרון ודיסקים קשיחים ב-USB | ✓ | ✓ (ללא שינוי) |
+| **כוננים פנימיים** (SATA / NVMe / IDE / RAID) | ✗ מוסתרים תמיד | ✓ רק אחרי סימון "כוננים פנימיים (!)" ואישור |
+| **הדיסק שממנו Windows פועל** | ✗ מוסר תמיד מהרשימה | ✓ מופיע עם הסימון `[!! דיסק המערכת !!]` |
+| אזהרה לפני צריבה לכונן פנימי | – | ✓ חלון אזהרה נוסף |
+| אזהרה לפני צריבה לדיסק המערכת | – | ✓ שני חלונות אזהרה נוספים, ברירת המחדל "לא" |
+| בדיקת עדכונים בתוך התוכנה | מול rufus.ie | מול **הפורק הזה** (גרסאות tsoolgee חתומות) |
+| מספרי גרסה | 4.15, 4.16_BETA2… | **אותם מספרים בדיוק** |
+| חתימה דיגיטלית (Authenticode) | חתום על ידי Akeo | לא חתום (ראו בהמשך) |
+| זיהוי בתוך התוכנה | – | הכותרת "tsoolgee edition", כפתור **"נערך ע״י צול גאה"** וקרדיט בחלון "אודות" |
 
-Additional information
-----------------------
+כל שאר ההתנהגות (פורמט, צריבת ISO, Windows To Go, בדיקת בלוקים פגומים וכו') זהה לחלוטין למקור.
 
-Rufus provides extensive information about what it is doing, either through its
-easily accessible log, or through the [Windows debug facility](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview).
+## איך משתמשים בכוננים פנימיים
 
-* [__Official Website__](https://rufus.ie)
-* [FAQ](https://github.com/pbatard/rufus/wiki/FAQ)
-* [Security and safety measures](https://github.com/pbatard/rufus/wiki/Security)
+1. פותחים את Rufus ולוחצים על **"הצגת מאפייני כונן מתקדמים"**.
+2. מסמנים את התיבה **"כוננים פנימיים (!)"**. היא נמצאת באותה שורה עם "הצגת רשימה של כונני USB קשיחים".
+3. קוראים את האזהרה ומאשרים.
+4. ברשימת ההתקנים מופיעים עכשיו גם הכוננים הפנימיים, עם הסימון `[פנימי]` או `[!! דיסק המערכת !!]`.
+5. בוחרים כונן ולוחצים "התחל". לפני הצריבה יופיעו האזהרות הנוספות, ורק אחריהן האזהרה הרגילה של Rufus.
 
-Enhancements/Bugs
------------------
+## איך זה עובד מבפנים
 
-Please use the [GitHub issue tracker](https://github.com/pbatard/rufus/issues)
-for reporting problems or suggesting new features.
+ב-Rufus המקורי אין "שתי" בדיקות שחוסמות כוננים פנימיים אלא **שש**, ועוד בדיקה שביעית שמסננת דיסקים קשיחים. במהדורה הזו **כולן** נפתחות, ורק כשהתיבה מסומנת. כשהתיבה כבויה, ההתנהגות זהה למקור.
+
+| # | איפה (`src/dev.c`) | מה המקור עושה | מה המהדורה עושה כשהתיבה מסומנת |
+|---|---|---|---|
+| 1 | כונן שאינו USB, לא נשלף, ואין לו VID:PID | נמחק תמיד (*"most likely a system drive"*) | מוצג ומסומן כפנימי |
+| 2 | כונן SCSI/SATA לא נשלף | נמחק שוב (*"better safe than sorry"*) | מוצג |
+| 3 | כונן שיש לו מחיצה שמוגדרת כ"לא נשלפת" | נמחק | מוצג |
+| 4 | כונן נשלף שאינו USB | מוצג רק עם צירוף המקשים הנסתר Ctrl+Alt+F | מוצג |
+| 5 | כונני IDE ו-NVMe (דרייבר שאינו SCSI) | לא נסרקים בכלל | נסרקים |
+| 6 | הדיסק של Windows והדיסק שממנו Rufus רץ | מוסרים מהרשימה | נשארים, עם סימון ואזהרות |
+| 7 | זיהוי "דיסק קשיח" (SMART) | מסנן דיסקים קשיחים | לא חל על כוננים פנימיים |
+
+דיסק המערכת מזוהה לפי המיקום האמיתי של תיקיית Windows ושל מחיצת האתחול (EFI), ולא לפי האות `C:`. הבדיקה הזו נעשית שוב גם רגע לפני הצריבה. כל קוד המהדורה נמצא ב-[`src/tsoolgee.c`](src/tsoolgee.c), והשינויים בקובצי המקור עצמם קטנים ומסומנים בהערה `tsoolgee`.
+
+## עדכונים אוטומטיים
+
+* **מעקב אחרי המקור:** כל 6 שעות [תהליך אוטומטי](.github/workflows/tsoolgee-release.yml) בודק אם יצאה גרסה חדשה של Rufus המקורי, כולל גרסאות בטא. אם יצאה, השינויים של המהדורה מוחלים עליה מחדש, היא נבנית ונבדקת אוטומטית (כולל צילומי מסך של הממשק בעברית ובאנגלית), ומתפרסם Release **עם אותו מספר גרסה בדיוק**.
+* **אם השינויים כבר לא מתאימים לקוד החדש** (התנגשות), לא מתפרסם כלום, ונפתח Issue בריפו.
+* **בתוך התוכנה:** "בדיקת עדכונים" של Rufus מצביעה במהדורה הזו על הריפו הזה ולא על rufus.ie. קובצי העדכון (`Rufus_win.ver` ו-`Rufus_beta_win.ver`, עם החתימות שלהם) מצורפים ל-[Release האחרון](https://github.com/tsoolgee/rufus-tsoolgee-edition/releases/latest), ולכן העדכון מוריד את גרסת tsoolgee החדשה ולא את המקורית. הם מוגשים כנכסי Release ולא דרך raw.githubusercontent.com, כי נטפרי חוסם שם את קובצי החתימה.
+* קובצי העדכון והקבצים להורדה חתומים במפתח RSA נפרד של המהדורה, והתוכנה בודקת את החתימה לפני שהיא מציעה עדכון או מורידה אותו. קבצים שהתוכנה מורידה מהשרת של Rufus (GRUB, Syslinux, רשימות DBX, סקריפט ההורדה Fido) ממשיכים להתקבל עם החתימה המקורית של Rufus. כל קובץ חייב להיות חתום באחד משני המפתחות.
+
+## למה מופיעות אזהרות כשמפעילים
+
+הקבצים לא חתומים בחתימת Authenticode, שעולה כסף. לכן:
+* ‏**Windows SmartScreen** עלול להציג "Windows הגן על המחשב". כדי להמשיך לוחצים על "מידע נוסף" ואז "הפעל בכל זאת".
+* ‏**Rufus עצמו** מציג בהפעלה הראשונה הודעה שזו אינה הגרסה הרשמית. זה נכון, וזה תקין.
+
+אפשר לבנות את התוכנה בעצמכם מקוד המקור שבריפו (Visual Studio, `rufus.sln`), בדיוק כמו את המקור.
+
+## איך מזהים שזו המהדורה הערוכה
+
+* **כותרת החלון:** ‏`Rufus 4.x.xxxx - tsoolgee edition`.
+* **כפתור "נערך ע״י צול גאה ↗"** בשורת הכותרת "מאפייני כונן", בצד השני מהכותרת. לחיצה עליו פותחת את [tsoolgee.uk](https://tsoolgee.uk).
+* **בחלון "אודות":** "מהדורה ערוכה ולא הגרסה המקורית של התוכנה", "נערך על ידי **צול גאה**" (המילים עצמן הן קישור ל-tsoolgee.uk), וכתובת לדיווח על בעיות במהדורה הזו.
+* **פרטי הקובץ** (מאפיינים ← פרטים): ‏`Rufus - tsoolgee edition (not the original Rufus)`.
+
+## רישיון וקרדיט
+
+* **Rufus** נכתב על ידי [Pete Batard / Akeo Consulting](https://github.com/pbatard/rufus) ומופץ תחת **GPL גרסה 3**. ה-README המקורי נמצא ב-[README.rufus.md](README.rufus.md).
+* המהדורה הזו נערכה על ידי [**צול גאה**](https://tsoolgee.uk), ומופצת גם היא תחת [GPLv3](LICENSE.txt), עם קוד המקור המלא בריפו. אין לה קשר רשמי ל-Rufus או ל-Akeo, ואין לפנות אליהם בבעיות שנוגעות לפורק. בעיות במהדורה הזו מדווחים [כאן](https://github.com/tsoolgee/rufus-tsoolgee-edition/issues).
+* התוכנה מסופקת **ללא שום אחריות** (ראו סעיפים 15–16 ברישיון).
+
+</div>

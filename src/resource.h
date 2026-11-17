@@ -110,6 +110,7 @@
 #define IDC_OLD_BIOS_FIXES              1020
 #define IDC_UEFI_MEDIA_VALIDATION       1021
 #define IDC_LIST_USB_HDD                1022
+#define IDC_LIST_INTERNAL               1990	// TSOOLGEE
 #define IDC_STATUS_TOOLBAR              1023
 #define IDC_SAVE                        1024
 #define IDC_HASH                        1025

@@ -19,6 +19,7 @@
 
 #include <windows.h>
 #include "resource.h"
+#include "tsoolgee.h"
 #include "localization.h"
 
 #define LOC_CTRL(x)  { #x, x }
@@ -58,6 +59,7 @@ const loc_control_id control_id[] = {
 	LOC_CTRL(IDC_PERSISTENCE_UNITS),
 	LOC_CTRL(IDC_OLD_BIOS_FIXES),
 	LOC_CTRL(IDC_LIST_USB_HDD),
+	LOC_CTRL(IDC_LIST_INTERNAL),
 	LOC_CTRL(IDC_STATUS_TOOLBAR),
 	LOC_CTRL(IDC_SAVE),
 	LOC_CTRL(IDC_HASH),

@@ -299,6 +299,7 @@
     <ClCompile Include="..\src\darkmode.c" />
     <ClCompile Include="..\src\dos_locale.c" />
     <ClCompile Include="..\src\drive.c" />
+    <ClCompile Include="..\src\tsoolgee.c" />
     <ClCompile Include="..\src\format.c" />
     <ClCompile Include="..\src\dos.c" />
     <ClCompile Include="..\src\format_ext.c" />
